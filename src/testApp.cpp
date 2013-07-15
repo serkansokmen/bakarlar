@@ -27,27 +27,28 @@ void testApp::setup(){
     
     threshold = 17.5f;
     fade = 27.0f;
-    flob.mirrorX = true;
-    flob.mirrorY = false;
     bDrawFlob = true;
+    
+    lookAtCentroid.set(ofGetWidth()/2, ofGetHeight()/2);
 	
 	blobs = NULL;
 	vidGrabber.setVerbose(true);
 	vidGrabber.listDevices();
 	vidGrabber.initGrabber(camWidth, camHeight);
-	
-    //	flob.setup((int)vidGrabber.getWidth(), (int)vidGrabber.getHeight(), ofGetWidth(), ofGetHeight());
-	flob.setup(camWidth/2, camHeight/2, (float)ofGetWidth(), (float)ofGetHeight());
+    
+    setupGui();
+    
+    flob.setup((int)vidGrabber.getWidth(), (int)vidGrabber.getHeight(), ofGetWidth(), ofGetHeight());
+	//flob.setup(camWidth/2, camHeight/2, (float)ofGetWidth(), (float)ofGetHeight());
     
 	flob.setOm(Flob::CONTINUOUS_DIFFERENCE)
         ->setColormode(Flob::LUMA601)
         ->setFade(fade)->setThresh(threshold)
         ->setThresholdmode(Flob::ABSDIF);
-	
-	cout << "ofxflob "  << flob.worldwidth << " : " << flob.worldheight << "\n ";
-	cout << flob.videoresw << " : " << flob.videoresh << "\n ";
+    flob.mirrorX = true;
+    flob.mirrorY = false;
     
-    setupGui();
+    initEyes();
 }
 
 //--------------------------------------------------------------
@@ -56,8 +57,8 @@ void testApp::setupGui(){
     gui = new ofxUICanvas();
     gui->addLabel("OBSERVERS");
     gui->addSpacer();
-    gui->addSlider("HORIZONTAL", 1.0f, 100.0f, &eyeCountHorizontal);
-    gui->addSlider("VERTICAL", 1.0f, 100.0f, &eyeCountVertical);
+    gui->addSlider("HORIZONTAL", 1.0f, 50.0f, &eyeCountHorizontal);
+    gui->addSlider("VERTICAL", 1.0f, 50.0f, &eyeCountVertical);
     gui->addLabelToggle("DEBUG MODE", &bDebugMode);
     
     gui->addSpacer();
@@ -65,6 +66,7 @@ void testApp::setupGui(){
     
     gui->addSpacer();
     gui->addFPSSlider("FPS");
+    gui->addToggle("FOLLOW MOUSE", &bFollowMouse);
     
     vector<string> omNames;
     omNames.push_back("STATIC DIFFERENCE");
@@ -107,8 +109,7 @@ void testApp::setupGui(){
     thresholdModeList->setAutoClose(true);
     gui->addSpacer();
     
-    gui->addToggle("MIRROR X", flob.getMirrorX());
-    gui->addToggle("MIRROR Y", flob.getMirrorY());
+    gui->addToggle("MIRROR X", true);
     gui->addSpacer();
     gui->addButton("CLEAR BACKGROUND", false);
     gui->addLabelToggle("DRAW FLOB", &bDrawFlob);
@@ -125,32 +126,51 @@ void testApp::setupGui(){
 void testApp::update(){
     
     if (!bEyesInitialized){
-		eyes.clear();
+		
+        eyes.clear();
 		initEyes();
-		bEyesInitialized = true;
+        
 	} else {
-		vidGrabber.update();
-		
-		if (vidGrabber.isFrameNew()){
-            blobs = flob.calc(flob.binarize(vidGrabber.getPixels(), (int)vidGrabber.getWidth(), (int)vidGrabber.getHeight()));
-		}
-		
+        
+        if (!bFollowMouse) {
+            vidGrabber.update();
+            if (vidGrabber.isFrameNew()){
+                blobs = flob.calc(flob.binarize(vidGrabber.getPixels(), (int)vidGrabber.getWidth(), (int)vidGrabber.getHeight()));
+            }
+        }
+        bool bLookAt = false;
+        float catchUpSpeed = .12f;
+        
+        if (bFollowMouse) {
+            lookAtCentroid.set(mouseX, mouseY);
+            bLookAt = true;
+        } else {
+            ofVec2f lookAtVec;
+            ofVec2f tempVec;
+            
+            // Calculate centroid
+            if (blobs != NULL && blobs->size() > 0){
+                for (int n=0; n<blobs->size(); n++) {
+                    ABlob &blob = *(blobs->at(n));
+                    tempVec.set(blob.cx, blob.cy);
+                    lookAtVec = lookAtVec + tempVec;
+                }
+                lookAtVec = lookAtVec / blobs->size();
+                
+                bLookAt = true;
+            } else {
+                lookAtVec.set(ofGetWidth()/2, ofGetHeight()/2);
+            }
+            
+            lookAtCentroid = catchUpSpeed * lookAtVec + (1-catchUpSpeed) * lookAtCentroid;
+        }
 		
 		for (int i=0; i<eyes.size(); i++){
             Eye *eye = eyes[i];
 			eye->update();
             
-            if (blobs != NULL && blobs->size() > 0){
-                for (int n=0; n<blobs->size(); n++) {
-                    ABlob &randomBlob = *(blobs->at(n));
-                    
-                    float x = ofMap(randomBlob.cx, 0, camWidth, 0, minSize);
-                    float y = ofMap(randomBlob.cy, 0, camHeight, 0, minSize);
-                    
-                    ofVec2f	*pos = new ofVec2f;
-                    pos->set(x, y);
-                    eye->lookAt(pos);
-                }
+            if (bLookAt) {
+                eye->lookAt(lookAtCentroid);
             }
 		}
 	}
@@ -159,40 +179,46 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-    if (bEyesInitialized)
+    if (bEyesInitialized) {
 	    for (int i=0; i<eyes.size(); i++) {
-            ofPushMatrix();
-            ofTranslate((ofGetWidth() - minSize)/2, 0);
             eyes[i]->draw(&bDebugMode);
-            ofPopMatrix();
         }
-    
-    if (bDrawFlob) {
-        
-//        ofSetColor(255, 75);
-//        flob.draw();
-        
-        int s = 128;
-        flob.videoimggray.draw(ofGetWidth()-s, 0, s, s);
-        flob.videotexbin.draw(ofGetWidth()-s, s, s, s);
-        flob.videotexmotion.draw(ofGetWidth()-s, s+s, s, s);
-        
-        if (blobs != NULL){
-            for (int i=0; i<blobs->size();i++){
-                ABlob & ab  = *(blobs->at(i));
-                ofPushStyle();
-                ofNoFill();
-                ofSetColor(0, 0, 255, 200);
-                ofRect(ab.bx, ab.by, ab.dimx, ab.dimy);
-                ofFill();
-                ofSetColor(0, 255, 0, 150);
-                ofRect(ab.cx, ab.cy, 5, 5);
-                ofPopStyle();
+        if (!bFollowMouse && bDrawFlob) {
+            //        ofSetColor(255, 75);
+            //        flob.draw();
+            
+            if (blobs != NULL){
+                for (int i=0; i<blobs->size();i++){
+                    ABlob & ab  = *(blobs->at(i));
+                    ofPushStyle();
+                    ofNoFill();
+                    ofSetColor(0, 0, 255, 200);
+                    ofRect(ab.bx, ab.by, ab.dimx, ab.dimy);
+                    ofFill();
+                    ofSetColor(0, 255, 0, 150);
+                    ofRect(ab.cx, ab.cy, 5, 5);
+                    ofPopStyle();
+                }
             }
+        }
+        
+        if (bDebugMode) {
+            ofPushStyle();
+            ofSetRectMode(OF_RECTMODE_CENTER);
+            ofNoFill();
+            ofSetColor(0, 175, 0, 255);
+            ofRect(lookAtCentroid.x, lookAtCentroid.y, 80, 80);
+            ofFill();
+            ofSetColor(255, 25);
+            ofRect(lookAtCentroid.x, lookAtCentroid.y, 80, 80);
+            ofPopStyle();
         }
     }
 	
-    if (gui->isVisible()) gui->draw();
+    if (gui->isVisible()) {
+        gui->draw();
+        flob.videotexmotion.draw(10, ofGetHeight() - camHeight + 120, camWidth/4, camHeight/4);
+    }
 }
 
 void testApp::mousePressed(int x, int y){
@@ -201,6 +227,7 @@ void testApp::mousePressed(int x, int y){
 
 //--------------------------------------------------------------
 void testApp::initEyes(){
+    
     if (eyes.size() > 0) {
         for (int i=0; i<eyes.size(); i++) {
             delete eyes[i];
@@ -215,7 +242,9 @@ void testApp::initEyes(){
 		for (int j = 0; j<(int)eyeCountVertical; j++){
 
 			ofVec2f pos;
-			pos.set(i*eyeWidth, j*eyeHeight);
+			pos.set(
+                (ofGetWidth() - minSize + eyeWidth)/2 + i*eyeWidth,
+                (ofGetHeight() - minSize + eyeHeight)/2 + j*eyeHeight);
             
 			Eye * eye = new Eye;
             // Set pixel data before eye setup
@@ -229,6 +258,7 @@ void testApp::initEyes(){
             cout << "Added eye j:" << j << ", i:" << i << endl;
 		}
 	}
+    bEyesInitialized = true;
 }
 
 //--------------------------------------------------------------
@@ -314,6 +344,6 @@ void testApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void testApp::exit(){
-    gui->saveSettings("GUI/gui_settings.xml");
+    gui->saveSettings("GUI/guiSettings.xml");
     delete gui;
 }

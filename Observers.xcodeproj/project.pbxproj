@@ -244,6 +244,65 @@
 		201D9517178F11E60049553D /* quadBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quadBlob.h; sourceTree = "<group>"; };
 		201D9518178F11E60049553D /* TBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TBlob.cpp; sourceTree = "<group>"; };
 		201D9519178F11E60049553D /* TBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBlob.h; sourceTree = "<group>"; };
+		20B0F3121794196D00BFA993 /* testApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
+		20B0F3131794196D00BFA993 /* testApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = testApp.h; sourceTree = "<group>"; };
+		20B0F3161794196D00BFA993 /* APACHE20 */ = {isa = PBXFileReference; lastKnownFileType = text; path = APACHE20; sourceTree = "<group>"; };
+		20B0F3171794196D00BFA993 /* cameras.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cameras.c; sourceTree = "<group>"; };
+		20B0F3181794196D00BFA993 /* cameras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cameras.h; sourceTree = "<group>"; };
+		20B0F3191794196D00BFA993 /* CONTRIB */ = {isa = PBXFileReference; lastKnownFileType = text; path = CONTRIB; sourceTree = "<group>"; };
+		20B0F31A1794196D00BFA993 /* core.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = core.c; sourceTree = "<group>"; };
+		20B0F31B1794196D00BFA993 /* freenect_internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freenect_internal.h; sourceTree = "<group>"; };
+		20B0F31C1794196D00BFA993 /* GPL2 */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPL2; sourceTree = "<group>"; };
+		20B0F31F1794196D00BFA993 /* freenect.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = freenect.dll; sourceTree = "<group>"; };
+		20B0F3201794196D00BFA993 /* freenect.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = freenect.lib; sourceTree = "<group>"; };
+		20B0F3211794196D00BFA993 /* libfreenect-registration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "libfreenect-registration.h"; sourceTree = "<group>"; };
+		20B0F3221794196D00BFA993 /* libfreenect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libfreenect.h; sourceTree = "<group>"; };
+		20B0F3231794196D00BFA993 /* libfreenect.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = libfreenect.hpp; sourceTree = "<group>"; };
+		20B0F3241794196D00BFA993 /* libfreenect.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = libfreenect.pc.in; sourceTree = "<group>"; };
+		20B0F3251794196D00BFA993 /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
+		20B0F3261794196D00BFA993 /* registration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = registration.c; sourceTree = "<group>"; };
+		20B0F3271794196D00BFA993 /* registration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = registration.h; sourceTree = "<group>"; };
+		20B0F3281794196D00BFA993 /* tilt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tilt.c; sourceTree = "<group>"; };
+		20B0F3291794196D00BFA993 /* usb_libusb10.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = usb_libusb10.c; sourceTree = "<group>"; };
+		20B0F32A1794196D00BFA993 /* usb_libusb10.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = usb_libusb10.h; sourceTree = "<group>"; };
+		20B0F32F1794196D00BFA993 /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
+		20B0F3311794196D00BFA993 /* usb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "usb-1.0.a"; sourceTree = "<group>"; };
+		20B0F3361794196D00BFA993 /* libusb0.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.dll; sourceTree = "<group>"; };
+		20B0F3371794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F3391794196D00BFA993 /* libusb0.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.dll; sourceTree = "<group>"; };
+		20B0F33A1794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F33B1794196D00BFA993 /* libusb-win32-bin-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libusb-win32-bin-README.txt"; sourceTree = "<group>"; };
+		20B0F33E1794196D00BFA993 /* installer_license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = installer_license.txt; sourceTree = "<group>"; };
+		20B0F3401794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F3411794196D00BFA993 /* libusb0_x86.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0_x86.dll; sourceTree = "<group>"; };
+		20B0F3421794196D00BFA993 /* Xbox_NUI_Audio.cat */ = {isa = PBXFileReference; lastKnownFileType = file; path = Xbox_NUI_Audio.cat; sourceTree = "<group>"; };
+		20B0F3431794196D00BFA993 /* Xbox_NUI_Audio.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Xbox_NUI_Audio.inf; sourceTree = "<group>"; };
+		20B0F3461794196D00BFA993 /* libusb0.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.dll; sourceTree = "<group>"; };
+		20B0F3471794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F3491794196D00BFA993 /* libusb0.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.dll; sourceTree = "<group>"; };
+		20B0F34A1794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F34B1794196D00BFA993 /* libusb-win32-bin-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libusb-win32-bin-README.txt"; sourceTree = "<group>"; };
+		20B0F34E1794196D00BFA993 /* installer_license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = installer_license.txt; sourceTree = "<group>"; };
+		20B0F3501794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F3511794196D00BFA993 /* libusb0_x86.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0_x86.dll; sourceTree = "<group>"; };
+		20B0F3521794196D00BFA993 /* Xbox_NUI_Camera.cat */ = {isa = PBXFileReference; lastKnownFileType = file; path = Xbox_NUI_Camera.cat; sourceTree = "<group>"; };
+		20B0F3531794196D00BFA993 /* Xbox_NUI_Camera.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Xbox_NUI_Camera.inf; sourceTree = "<group>"; };
+		20B0F3561794196D00BFA993 /* libusb0.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.dll; sourceTree = "<group>"; };
+		20B0F3571794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F3591794196D00BFA993 /* libusb0.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.dll; sourceTree = "<group>"; };
+		20B0F35A1794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F35B1794196D00BFA993 /* libusb-win32-bin-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libusb-win32-bin-README.txt"; sourceTree = "<group>"; };
+		20B0F35E1794196D00BFA993 /* installer_license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = installer_license.txt; sourceTree = "<group>"; };
+		20B0F3601794196D00BFA993 /* libusb0.sys */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0.sys; sourceTree = "<group>"; };
+		20B0F3611794196D00BFA993 /* libusb0_x86.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = libusb0_x86.dll; sourceTree = "<group>"; };
+		20B0F3621794196D00BFA993 /* Xbox_NUI_Motor.cat */ = {isa = PBXFileReference; lastKnownFileType = file; path = Xbox_NUI_Motor.cat; sourceTree = "<group>"; };
+		20B0F3631794196D00BFA993 /* Xbox_NUI_Motor.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Xbox_NUI_Motor.inf; sourceTree = "<group>"; };
+		20B0F3641794196D00BFA993 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		20B0F3651794196D00BFA993 /* README.markdown */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		20B0F3671794196D00BFA993 /* update_freenect.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = update_freenect.sh; sourceTree = "<group>"; };
+		20B0F3691794196D00BFA993 /* ofxBase3DVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxBase3DVideo.h; sourceTree = "<group>"; };
+		20B0F36A1794196D00BFA993 /* ofxKinect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxKinect.cpp; sourceTree = "<group>"; };
+		20B0F36B1794196D00BFA993 /* ofxKinect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxKinect.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -697,9 +756,341 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		20B0F2F81794196D00BFA993 /* ofxKinect */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F2FA1794196D00BFA993 /* example */,
+				20B0F3141794196D00BFA993 /* libs */,
+				20B0F3641794196D00BFA993 /* LICENSE.txt */,
+				20B0F3651794196D00BFA993 /* README.markdown */,
+				20B0F3661794196D00BFA993 /* scripts */,
+				20B0F3681794196D00BFA993 /* src */,
+			);
+			name = ofxKinect;
+			path = ../../../addons/ofxKinect;
+			sourceTree = "<group>";
+		};
+		20B0F2FA1794196D00BFA993 /* example */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3101794196D00BFA993 /* src */,
+			);
+			path = example;
+			sourceTree = "<group>";
+		};
+		20B0F3101794196D00BFA993 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3121794196D00BFA993 /* testApp.cpp */,
+				20B0F3131794196D00BFA993 /* testApp.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		20B0F3141794196D00BFA993 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3151794196D00BFA993 /* libfreenect */,
+				20B0F32B1794196D00BFA993 /* libusb */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		20B0F3151794196D00BFA993 /* libfreenect */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3161794196D00BFA993 /* APACHE20 */,
+				20B0F3171794196D00BFA993 /* cameras.c */,
+				20B0F3181794196D00BFA993 /* cameras.h */,
+				20B0F3191794196D00BFA993 /* CONTRIB */,
+				20B0F31A1794196D00BFA993 /* core.c */,
+				20B0F31B1794196D00BFA993 /* freenect_internal.h */,
+				20B0F31C1794196D00BFA993 /* GPL2 */,
+				20B0F31D1794196D00BFA993 /* lib */,
+				20B0F3211794196D00BFA993 /* libfreenect-registration.h */,
+				20B0F3221794196D00BFA993 /* libfreenect.h */,
+				20B0F3231794196D00BFA993 /* libfreenect.hpp */,
+				20B0F3241794196D00BFA993 /* libfreenect.pc.in */,
+				20B0F3251794196D00BFA993 /* loader.h */,
+				20B0F3261794196D00BFA993 /* registration.c */,
+				20B0F3271794196D00BFA993 /* registration.h */,
+				20B0F3281794196D00BFA993 /* tilt.c */,
+				20B0F3291794196D00BFA993 /* usb_libusb10.c */,
+				20B0F32A1794196D00BFA993 /* usb_libusb10.h */,
+			);
+			path = libfreenect;
+			sourceTree = "<group>";
+		};
+		20B0F31D1794196D00BFA993 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F31E1794196D00BFA993 /* vs2010 */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		20B0F31E1794196D00BFA993 /* vs2010 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F31F1794196D00BFA993 /* freenect.dll */,
+				20B0F3201794196D00BFA993 /* freenect.lib */,
+			);
+			path = vs2010;
+			sourceTree = "<group>";
+		};
+		20B0F32B1794196D00BFA993 /* libusb */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F32C1794196D00BFA993 /* osx */,
+				20B0F3321794196D00BFA993 /* win */,
+			);
+			path = libusb;
+			sourceTree = "<group>";
+		};
+		20B0F32C1794196D00BFA993 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F32D1794196D00BFA993 /* include */,
+				20B0F3301794196D00BFA993 /* libs */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		20B0F32D1794196D00BFA993 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F32E1794196D00BFA993 /* libusb-1.0 */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		20B0F32E1794196D00BFA993 /* libusb-1.0 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F32F1794196D00BFA993 /* libusb.h */,
+			);
+			path = "libusb-1.0";
+			sourceTree = "<group>";
+		};
+		20B0F3301794196D00BFA993 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3311794196D00BFA993 /* usb-1.0.a */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		20B0F3321794196D00BFA993 /* win */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3331794196D00BFA993 /* inf */,
+			);
+			path = win;
+			sourceTree = "<group>";
+		};
+		20B0F3331794196D00BFA993 /* inf */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3341794196D00BFA993 /* xbox nui audio */,
+				20B0F3441794196D00BFA993 /* xbox nui camera */,
+				20B0F3541794196D00BFA993 /* xbox nui motor */,
+			);
+			path = inf;
+			sourceTree = "<group>";
+		};
+		20B0F3341794196D00BFA993 /* xbox nui audio */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3351794196D00BFA993 /* amd64 */,
+				20B0F3381794196D00BFA993 /* ia64 */,
+				20B0F33B1794196D00BFA993 /* libusb-win32-bin-README.txt */,
+				20B0F33C1794196D00BFA993 /* license */,
+				20B0F33F1794196D00BFA993 /* x86 */,
+				20B0F3421794196D00BFA993 /* Xbox_NUI_Audio.cat */,
+				20B0F3431794196D00BFA993 /* Xbox_NUI_Audio.inf */,
+			);
+			path = "xbox nui audio";
+			sourceTree = "<group>";
+		};
+		20B0F3351794196D00BFA993 /* amd64 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3361794196D00BFA993 /* libusb0.dll */,
+				20B0F3371794196D00BFA993 /* libusb0.sys */,
+			);
+			path = amd64;
+			sourceTree = "<group>";
+		};
+		20B0F3381794196D00BFA993 /* ia64 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3391794196D00BFA993 /* libusb0.dll */,
+				20B0F33A1794196D00BFA993 /* libusb0.sys */,
+			);
+			path = ia64;
+			sourceTree = "<group>";
+		};
+		20B0F33C1794196D00BFA993 /* license */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F33D1794196D00BFA993 /* libusb-win32 */,
+			);
+			path = license;
+			sourceTree = "<group>";
+		};
+		20B0F33D1794196D00BFA993 /* libusb-win32 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F33E1794196D00BFA993 /* installer_license.txt */,
+			);
+			path = "libusb-win32";
+			sourceTree = "<group>";
+		};
+		20B0F33F1794196D00BFA993 /* x86 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3401794196D00BFA993 /* libusb0.sys */,
+				20B0F3411794196D00BFA993 /* libusb0_x86.dll */,
+			);
+			path = x86;
+			sourceTree = "<group>";
+		};
+		20B0F3441794196D00BFA993 /* xbox nui camera */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3451794196D00BFA993 /* amd64 */,
+				20B0F3481794196D00BFA993 /* ia64 */,
+				20B0F34B1794196D00BFA993 /* libusb-win32-bin-README.txt */,
+				20B0F34C1794196D00BFA993 /* license */,
+				20B0F34F1794196D00BFA993 /* x86 */,
+				20B0F3521794196D00BFA993 /* Xbox_NUI_Camera.cat */,
+				20B0F3531794196D00BFA993 /* Xbox_NUI_Camera.inf */,
+			);
+			path = "xbox nui camera";
+			sourceTree = "<group>";
+		};
+		20B0F3451794196D00BFA993 /* amd64 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3461794196D00BFA993 /* libusb0.dll */,
+				20B0F3471794196D00BFA993 /* libusb0.sys */,
+			);
+			path = amd64;
+			sourceTree = "<group>";
+		};
+		20B0F3481794196D00BFA993 /* ia64 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3491794196D00BFA993 /* libusb0.dll */,
+				20B0F34A1794196D00BFA993 /* libusb0.sys */,
+			);
+			path = ia64;
+			sourceTree = "<group>";
+		};
+		20B0F34C1794196D00BFA993 /* license */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F34D1794196D00BFA993 /* libusb-win32 */,
+			);
+			path = license;
+			sourceTree = "<group>";
+		};
+		20B0F34D1794196D00BFA993 /* libusb-win32 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F34E1794196D00BFA993 /* installer_license.txt */,
+			);
+			path = "libusb-win32";
+			sourceTree = "<group>";
+		};
+		20B0F34F1794196D00BFA993 /* x86 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3501794196D00BFA993 /* libusb0.sys */,
+				20B0F3511794196D00BFA993 /* libusb0_x86.dll */,
+			);
+			path = x86;
+			sourceTree = "<group>";
+		};
+		20B0F3541794196D00BFA993 /* xbox nui motor */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3551794196D00BFA993 /* amd64 */,
+				20B0F3581794196D00BFA993 /* ia64 */,
+				20B0F35B1794196D00BFA993 /* libusb-win32-bin-README.txt */,
+				20B0F35C1794196D00BFA993 /* license */,
+				20B0F35F1794196D00BFA993 /* x86 */,
+				20B0F3621794196D00BFA993 /* Xbox_NUI_Motor.cat */,
+				20B0F3631794196D00BFA993 /* Xbox_NUI_Motor.inf */,
+			);
+			path = "xbox nui motor";
+			sourceTree = "<group>";
+		};
+		20B0F3551794196D00BFA993 /* amd64 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3561794196D00BFA993 /* libusb0.dll */,
+				20B0F3571794196D00BFA993 /* libusb0.sys */,
+			);
+			path = amd64;
+			sourceTree = "<group>";
+		};
+		20B0F3581794196D00BFA993 /* ia64 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3591794196D00BFA993 /* libusb0.dll */,
+				20B0F35A1794196D00BFA993 /* libusb0.sys */,
+			);
+			path = ia64;
+			sourceTree = "<group>";
+		};
+		20B0F35C1794196D00BFA993 /* license */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F35D1794196D00BFA993 /* libusb-win32 */,
+			);
+			path = license;
+			sourceTree = "<group>";
+		};
+		20B0F35D1794196D00BFA993 /* libusb-win32 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F35E1794196D00BFA993 /* installer_license.txt */,
+			);
+			path = "libusb-win32";
+			sourceTree = "<group>";
+		};
+		20B0F35F1794196D00BFA993 /* x86 */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3601794196D00BFA993 /* libusb0.sys */,
+				20B0F3611794196D00BFA993 /* libusb0_x86.dll */,
+			);
+			path = x86;
+			sourceTree = "<group>";
+		};
+		20B0F3661794196D00BFA993 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3671794196D00BFA993 /* update_freenect.sh */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		20B0F3681794196D00BFA993 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				20B0F3691794196D00BFA993 /* ofxBase3DVideo.h */,
+				20B0F36A1794196D00BFA993 /* ofxKinect.cpp */,
+				20B0F36B1794196D00BFA993 /* ofxKinect.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				20B0F2F81794196D00BFA993 /* ofxKinect */,
 				201D94FC178F11E60049553D /* ofxFlob */,
 				201D917F178F068F0049553D /* ofxOpenCv */,
 				201D9217178F0EB80049553D /* ofxUI */,

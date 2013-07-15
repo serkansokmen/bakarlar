@@ -3,8 +3,11 @@
 #include "ofMain.h"
 #include "ofxUI.h"
 #include "ofxFlob.h"
+#include "ofxKinect.h"
+#include "ofxOpenCv.h"
 #include "Eye.h"
 
+//#define USE_KINECT
 
 class testApp : public ofBaseApp
 {
@@ -26,6 +29,21 @@ public:
     bool    bDebugMode, bEyesInitialized;
     float	minSize;
 
+#ifdef USE_KINECT
+    ofxKinect kinect;
+    
+    ofxCvColorImage colorImg;
+	
+	ofxCvGrayscaleImage grayImage; // grayscale depth image
+	ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
+	ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
+	
+	ofxCvContourFinder contourFinder;
+    
+    int nearThreshold;
+	int farThreshold;
+#endif
+
 	vector	<Eye*>	eyes;
     
     ofImage surfaceImg;
@@ -35,13 +53,14 @@ public:
 
 	ofVideoGrabber vidGrabber;
     Flob flob;
+    vector<ABlob*> *blobs;
     bool bDrawFlob;
-
-	vector<ABlob*> *blobs;
-
-    ofxUICanvas *gui;
-
     float threshold;
     float fade;
     bool bClearBackground;
+    
+    ofVec2f lookAtCentroid;
+    bool bFollowMouse;
+    
+    ofxUICanvas *gui;
 };

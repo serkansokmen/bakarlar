@@ -6,32 +6,26 @@
 class Eye
 {
 	
-	float width;
-	float height;
+	float eyeWidth;
+	float eyeHeight;
+    float eyeRadius;
 	
 	ofVec2f pupilPos;
 	ofVec2f centerPos;
-	
-	float	dist;
-	float	angle;
-	float	size;
+    
+  	float   catchUpSpeed;
 	
 public:
     ~Eye();
     
-    void setup(ofVec2f p, float w, float h);
+    void setup(const ofVec2f &p, float w, float h);
 	void update();
-	void updateWithRandomPos();
 	void draw(bool *debugMode);
 	
-	void lookAt(ofVec2f *p);
-	void xenoToPoint(float catchX, float catchY);
+	void lookAt(const ofVec2f &p);
     
     ofImage surfaceImg;
 	ofImage whiteImg;
 	ofImage pupilImg;
 	ofImage shadeImg;
-	
-	float   catchUpSpeed;
-	ofVec2f	pos;
 };

@@ -1,30 +1,20 @@
 #include "Eye.h"
 #include "ofMain.h"
 
-void Eye::setup(ofVec2f p, float w, float h)
+void Eye::setup(const ofVec2f &p, float w, float h)
 {
-	pos.set(p.x, p.y);
-	
-	width = w;
-	height = h;
+    eyeWidth = w;
+    eyeHeight = h;
     
-    centerPos.set(pos.x + width/2, pos.y + height/2);
-	pupilPos.set(0, 0);
+    centerPos.set(p.x, p.y);
+	pupilPos.set(centerPos);
 	
-	dist	= 0;
-	angle	= 0;
-	size	= MIN(width, height);
+    eyeRadius = min(eyeWidth, eyeHeight);
 	catchUpSpeed = .12f;
     
     int numPixels			= pupilImg.width * pupilImg.height * 4;
 	unsigned char * px		= pupilImg.getPixels();
 	unsigned char * tarPx	= new unsigned char[pupilImg.width * pupilImg.height * 4];
-    
-    // resize images
-    surfaceImg.resize(w / surfaceImg.width, h / surfaceImg.height);
-	whiteImg.resize(w / whiteImg.width, h / whiteImg.height);
-	pupilImg.resize(w / pupilImg.width, h / pupilImg.height);
-	shadeImg.resize(w / shadeImg.width, h / shadeImg.height);
 	
     // colorize pupil
 	ofColor	*c = new ofColor;
@@ -58,81 +48,66 @@ void Eye::setup(ofVec2f p, float w, float h)
 	
 	pupilImg.setFromPixels(tarPx, pupilImg.width, pupilImg.height, OF_IMAGE_COLOR_ALPHA);
 	
-	float psw = size * pupilImg.width / surfaceImg.width;
-	float psh = size * pupilImg.height / surfaceImg.height;
-	
-	surfaceImg.resize(size, size);
-	whiteImg.resize(size, size);
-	shadeImg.resize(size, size);
-	pupilImg.resize(psw, psh);
+    
+	float pupilWidth = eyeRadius * pupilImg.width / surfaceImg.width;
+	float pupilHeight = eyeRadius * pupilImg.height / surfaceImg.height;
+    
+    // resize images
+    surfaceImg.resize(eyeRadius, eyeRadius);
+    whiteImg.resize(eyeRadius, eyeRadius);
+	shadeImg.resize(eyeRadius, eyeRadius);
+	pupilImg.resize(pupilWidth, pupilHeight);
 }
 
 void Eye::update(){
     
 }
 
-//------------------------------------------------------------------
-void Eye::xenoToPoint(float catchX, float catchY){
-	pupilPos.x = catchUpSpeed * catchX + (1-catchUpSpeed) * pupilPos.x;
-	pupilPos.y = catchUpSpeed * catchY + (1-catchUpSpeed) * pupilPos.y;
-}
-
 void Eye::draw(bool *debugMode){
-	float cx = size/2;
-	float cy = size/2;
+	
+    float cx = eyeRadius/2;
+	float cy = eyeRadius/2;
 	
 	if (*debugMode){
-		
-        ofPushMatrix();
-        ofTranslate(centerPos.x, centerPos.y, 0);
         
         ofPushStyle();
         ofNoFill();
         ofSetColor(100);
-        ofEllipse(0, 0, width, height);
+        ofCircle(centerPos, eyeRadius * .4f);
         
-        ofTranslate(pupilPos.x, pupilPos.x, 0);
         ofSetColor(255);
-		ofLine(-5, 0, 5, 0);
-		ofLine(0, -5, 0, 5);
-		
-		ofPopMatrix();
-		ofFill();
-        
         ofPushMatrix();
-        ofTranslate(centerPos.x, centerPos.y, 0);
-        
-        ofPopStyle();
+        ofTranslate(pupilPos);
+        float length = eyeRadius * .1f;
+        ofLine(-length, 0, length, 0);
+        ofLine(0, length, 0, -length);
         ofPopMatrix();
+        ofDrawBitmapString(ofToString(pupilPos), pupilPos - eyeRadius * .1f);
+		
+        ofPopStyle();
         
 	} else {
         ofSetRectMode(OF_RECTMODE_CENTER);
-		ofPushMatrix();
-		ofTranslate(centerPos.x, centerPos.y, 0);
-		whiteImg.draw(0, 0);
+
+        ofPushStyle();
+        ofSetColor(255, 255);
+        
+		whiteImg.draw(centerPos);
 		pupilImg.draw(pupilPos.x, pupilPos.y);
-		surfaceImg.draw(0, 0);
-		shadeImg.draw(0, 0);
-		ofPopMatrix();
+		surfaceImg.draw(centerPos);
+		shadeImg.draw(centerPos);
+        
+        ofPopStyle();
 		ofSetRectMode(OF_RECTMODE_CORNER);
 	}
-	ofDisableAlphaBlending();
 }
 
-void Eye::lookAt(ofVec2f *p){
+void Eye::lookAt(const ofVec2f &p){
     
-	dist	= centerPos.distance(*p);
-	//angle	= atan2(p->y - height/2, p->x - width/2);
-	
-	ofVec2f *pos = new ofVec2f;
-	
-	pos->set(p->x - centerPos.x, p->y - centerPos.y);
-	
-	pos->normalize();
-	//*pos *= dist / 50;
-	*pos *= size * .15;
-	
-	xenoToPoint(pos->x, pos->y);
+    float perc = ofNormalize(eyeRadius / 4, 0, ofGetHeight());
+	ofVec2f v = centerPos.getInterpolated(p, perc);
+    
+    pupilPos.set(catchUpSpeed * v + (1-catchUpSpeed) * pupilPos);
 }
 
 Eye::~Eye() {
