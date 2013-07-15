@@ -12,13 +12,18 @@ void testApp::setup(){
 	ofBackground(0);
 	ofSetFrameRate(50);
 	ofSetVerticalSync(true);
-	
+    ofEnableSmoothing();
 	
 	eyeCountHorizontal	= 5;
 	eyeCountVertical	= 5;
     minSize = MIN(ofGetWidth(), ofGetHeight());
     bDebugMode = true;
     bEyesInitialized = false;
+    
+    surfaceImg.loadImage("surface1.png");
+	whiteImg.loadImage("white1.png");
+	pupilImg.loadImage("pupil1.png");
+	shadeImg.loadImage("shade1.png");
     
     threshold = 17.5f;
     fade = 27.0f;
@@ -51,8 +56,8 @@ void testApp::setupGui(){
     gui = new ofxUICanvas();
     gui->addLabel("OBSERVERS");
     gui->addSpacer();
-    gui->addSlider("HORIZONTAL", 1.0f, 20.0f, &eyeCountHorizontal);
-    gui->addSlider("VERTICAL", 1.0f, 20.0f, &eyeCountVertical);
+    gui->addSlider("HORIZONTAL", 1.0f, 100.0f, &eyeCountHorizontal);
+    gui->addSlider("VERTICAL", 1.0f, 100.0f, &eyeCountVertical);
     gui->addLabelToggle("DEBUG MODE", &bDebugMode);
     
     gui->addSpacer();
@@ -136,16 +141,16 @@ void testApp::update(){
 			eye->update();
             
             if (blobs != NULL && blobs->size() > 0){
-                
-                int randomIndex = (int)ofRandom(blobs->size() - 1);
-                ABlob &randomBlob = *(blobs->at(randomIndex));
-                
-                float x = ofMap(randomBlob.cx, 0, camWidth, 0, minSize);
-                float y = ofMap(randomBlob.cy, 0, camHeight, 0, minSize);
-                
-                ofVec2f	*pos = new ofVec2f;
-                pos->set(x, y);
-                eye->lookAt(pos);
+                for (int n=0; n<blobs->size(); n++) {
+                    ABlob &randomBlob = *(blobs->at(n));
+                    
+                    float x = ofMap(randomBlob.cx, 0, camWidth, 0, minSize);
+                    float y = ofMap(randomBlob.cy, 0, camHeight, 0, minSize);
+                    
+                    ofVec2f	*pos = new ofVec2f;
+                    pos->set(x, y);
+                    eye->lookAt(pos);
+                }
             }
 		}
 	}
@@ -154,52 +159,44 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-    // ofSetColor(255, 200);
-    // flob.draw();
-    
-    if (bEyesInitialized) {
-		ofPushMatrix();
-        ofTranslate(300, 0, 0);
-		for (int i=0; i<eyes.size(); i++){
+    if (bEyesInitialized)
+	    for (int i=0; i<eyes.size(); i++) {
+            ofPushMatrix();
+            ofTranslate((ofGetWidth() - minSize)/2, 0);
             eyes[i]->draw(&bDebugMode);
-		}
-		ofPopMatrix();
-        
-        if (bDrawFlob) {
-            int s = 128;
-            flob.videoimggray.draw(ofGetWidth()-s, 0, s, s);
-            flob.videotexbin.draw(ofGetWidth()-s, s, s, s);
-            flob.videotexmotion.draw(ofGetWidth()-s, s+s, s, s);
-            
-            if (blobs != NULL){
-                for (int i=0; i<blobs->size();i++){
-                    ABlob & ab  = *(blobs->at(i));
-                    ofNoFill();
-                    ofSetColor(0, 0, 255, 100);
-                    ofRect(ab.bx, ab.by, ab.dimx, ab.dimy);
-                    ofFill();
-                    ofSetColor(0, 255, 0, 100);
-                    ofRect(ab.cx, ab.cy, 5, 5);
-                }
-            }
-            
-            string info = "ofxFlob info:\n";
-            info += "srcdim: " + ofToString(flob.videoresw) +" "+ofToString(flob.videoresh)+" dstdim: "+ ofToString(flob.worldwidth) +" "+ofToString(flob.worldheight)+ "\n";
-            info += "<t/T> thresh: " + ofToString(flob.getThresh()) + "\n";
-            info += "<f/F> fade: " + ofToString(flob.getFade()) + "\n";
-            info += "<o> om: " + ofToString(flob.getOm()) + "\n";
-            info += "<c> colormode: " + ofToString(flob.getColormode()) + "\n";
-            info += "<b> thresholdmode: " + ofToString(flob.getThresholdmode()) + "\n";
-            info += "<x> mirrorx: " + ofToString(flob.mirrorX) + "\n";
-            info += "<y> mirrory: " + ofToString(flob.mirrorY) + "\n<space> to clearbg in om 0";
-            
-            ofSetColor(255);
-            ofDrawBitmapString(info, 10, ofGetHeight() - 300);
+            ofPopMatrix();
         }
-	}
+    
+    if (bDrawFlob) {
+        
+//        ofSetColor(255, 75);
+//        flob.draw();
+        
+        int s = 128;
+        flob.videoimggray.draw(ofGetWidth()-s, 0, s, s);
+        flob.videotexbin.draw(ofGetWidth()-s, s, s, s);
+        flob.videotexmotion.draw(ofGetWidth()-s, s+s, s, s);
+        
+        if (blobs != NULL){
+            for (int i=0; i<blobs->size();i++){
+                ABlob & ab  = *(blobs->at(i));
+                ofPushStyle();
+                ofNoFill();
+                ofSetColor(0, 0, 255, 200);
+                ofRect(ab.bx, ab.by, ab.dimx, ab.dimy);
+                ofFill();
+                ofSetColor(0, 255, 0, 150);
+                ofRect(ab.cx, ab.cy, 5, 5);
+                ofPopStyle();
+            }
+        }
+    }
 	
-    if (gui->isVisible())
-        gui->draw();
+    if (gui->isVisible()) gui->draw();
+}
+
+void testApp::mousePressed(int x, int y){
+
 }
 
 //--------------------------------------------------------------
@@ -218,11 +215,18 @@ void testApp::initEyes(){
 		for (int j = 0; j<(int)eyeCountVertical; j++){
 
 			ofVec2f pos;
-			pos.set((float)i * eyeWidth, (float)j * eyeHeight);
+			pos.set(i*eyeWidth, j*eyeHeight);
+            
 			Eye * eye = new Eye;
-			
-			eye->setup(pos, eyeWidth, eyeHeight);
+            // Set pixel data before eye setup
+			eye->surfaceImg.setFromPixels(surfaceImg.getPixelsRef());
+            eye->whiteImg.setFromPixels(whiteImg.getPixelsRef());
+            eye->pupilImg.setFromPixels(pupilImg.getPixelsRef());
+            eye->shadeImg.setFromPixels(shadeImg.getPixelsRef());
+            eye->setup(pos, eyeWidth, eyeHeight);
 			eyes.push_back(eye);
+            
+            cout << "Added eye j:" << j << ", i:" << i << endl;
 		}
 	}
 }

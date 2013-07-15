@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 
+
 class Eye
 {
 	
@@ -15,20 +16,21 @@ class Eye
 	float	angle;
 	float	size;
 	
-	ofImage surfaceImg;
-	ofImage whiteImg;
-	ofImage pupilImg;
-	ofImage shadeImg;
-	
 public:
-	
-	void setup(ofVec2f p, float w, float h);
+    ~Eye();
+    
+    void setup(ofVec2f p, float w, float h);
 	void update();
 	void updateWithRandomPos();
 	void draw(bool *debugMode);
 	
 	void lookAt(ofVec2f *p);
 	void xenoToPoint(float catchX, float catchY);
+    
+    ofImage surfaceImg;
+	ofImage whiteImg;
+	ofImage pupilImg;
+	ofImage shadeImg;
 	
 	float   catchUpSpeed;
 	ofVec2f	pos;

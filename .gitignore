@@ -83,3 +83,4 @@ Desktop.ini
 # Miscellaneous
 .mailmap
 
+bin/data/GUI/gui_settings.xml

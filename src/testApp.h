@@ -5,6 +5,7 @@
 #include "ofxFlob.h"
 #include "Eye.h"
 
+
 class testApp : public ofBaseApp
 {
 
@@ -12,13 +13,13 @@ public:
 	void setup();
 	void update();
 	void draw();
-	void keyPressed  (int key);
+	void keyPressed(int key);
 	void windowResized(int w, int h);
-
-	void exit();
+    void mousePressed(int x, int y);
+    void initEyes();
     void setupGui();
     void guiEvent(ofxUIEventArgs &e);
-    void initEyes();
+    void exit();
 
 	float	eyeCountHorizontal;
 	float	eyeCountVertical;
@@ -26,8 +27,13 @@ public:
     float	minSize;
 
 	vector	<Eye*>	eyes;
+    
+    ofImage surfaceImg;
+	ofImage whiteImg;
+	ofImage pupilImg;
+	ofImage shadeImg;
 
-	ofVideoGrabber			vidGrabber;
+	ofVideoGrabber vidGrabber;
     Flob flob;
     bool bDrawFlob;
 

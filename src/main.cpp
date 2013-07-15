@@ -9,7 +9,7 @@ int main( ){
 	ofSetupOpenGL(&window, 1440, 900, OF_FULLSCREEN);			// <-------- setup the GL context
     
     // Set anti-aliasing
-    // window.setGlutDisplayString("rgba double samples>=2 depth");
+    window.setGlutDisplayString("rgba double samples>=2 depth");
     
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN

@@ -7,34 +7,32 @@ void Eye::setup(ofVec2f p, float w, float h)
 	
 	width = w;
 	height = h;
-	
-	centerPos.set(pos.x + width/2, pos.y + height/2);
+    
+    centerPos.set(pos.x + width/2, pos.y + height/2);
 	pupilPos.set(0, 0);
 	
 	dist	= 0;
 	angle	= 0;
-	
 	size	= MIN(width, height);
-	
 	catchUpSpeed = .12f;
-	
-	surfaceImg.loadImage("surface1.png");
-	whiteImg.loadImage("white1.png");
-	pupilImg.loadImage("pupil1.png");
-	shadeImg.loadImage("shade1.png");
     
     int numPixels			= pupilImg.width * pupilImg.height * 4;
 	unsigned char * px		= pupilImg.getPixels();
 	unsigned char * tarPx	= new unsigned char[pupilImg.width * pupilImg.height * 4];
+    
+    // resize images
+    surfaceImg.resize(w / surfaceImg.width, h / surfaceImg.height);
+	whiteImg.resize(w / whiteImg.width, h / whiteImg.height);
+	pupilImg.resize(w / pupilImg.width, h / pupilImg.height);
+	shadeImg.resize(w / shadeImg.width, h / shadeImg.height);
 	
+    // colorize pupil
 	ofColor	*c = new ofColor;
 	int hRand = (int) ofRandom(0, 200);
 	int	sRand = (int) ofRandom(20, 100);
 	
-	for (int i=0; i<pupilImg.width; i ++)
-	{
-		for (int j=0; j<pupilImg.height; j++)
-		{
+	for (int i=0; i<pupilImg.width; i ++){
+		for (int j=0; j<pupilImg.height; j++){
 			int	index	= j * pupilImg.width + i;
 			
 			int r = px[index * 4 + 0];
@@ -70,7 +68,7 @@ void Eye::setup(ofVec2f p, float w, float h)
 }
 
 void Eye::update(){
-	
+    
 }
 
 //------------------------------------------------------------------
@@ -83,24 +81,30 @@ void Eye::draw(bool *debugMode){
 	float cx = size/2;
 	float cy = size/2;
 	
-	ofEnableAlphaBlending();
-	ofSetColor(255, 255);
 	if (*debugMode){
-		ofNoFill();
-		ofSetLineWidth(1);
-		ofSetColor(100);
-		ofEllipse(pos.x + size/2, pos.y + size/2, size * .8, size * .8);
-		ofSetColor(255);
 		
-		ofPushMatrix();
-		ofTranslate(centerPos.x, centerPos.y, 0);
-		ofTranslate(pupilPos.x, pupilPos.x, 0);
-		
+        ofPushMatrix();
+        ofTranslate(centerPos.x, centerPos.y, 0);
+        
+        ofPushStyle();
+        ofNoFill();
+        ofSetColor(100);
+        ofEllipse(0, 0, width, height);
+        
+        ofTranslate(pupilPos.x, pupilPos.x, 0);
+        ofSetColor(255);
 		ofLine(-5, 0, 5, 0);
 		ofLine(0, -5, 0, 5);
 		
 		ofPopMatrix();
 		ofFill();
+        
+        ofPushMatrix();
+        ofTranslate(centerPos.x, centerPos.y, 0);
+        
+        ofPopStyle();
+        ofPopMatrix();
+        
 	} else {
         ofSetRectMode(OF_RECTMODE_CENTER);
 		ofPushMatrix();
@@ -131,5 +135,7 @@ void Eye::lookAt(ofVec2f *p){
 	xenoToPoint(pos->x, pos->y);
 }
 
-
+Eye::~Eye() {
+    
+}
 
