@@ -20,6 +20,7 @@ public:
 	void windowResized(int w, int h);
     void mousePressed(int x, int y);
     void initEyes();
+    void clearEyes();
     void setupGui();
     void guiEvent(ofxUIEventArgs &e);
     void exit();

@@ -228,13 +228,6 @@ void testApp::mousePressed(int x, int y){
 //--------------------------------------------------------------
 void testApp::initEyes(){
     
-    if (eyes.size() > 0) {
-        for (int i=0; i<eyes.size(); i++) {
-            delete eyes[i];
-        }
-        eyes.clear();
-    }
-    
     float eyeWidth	= minSize / (int)eyeCountHorizontal;
 	float eyeHeight = minSize / (int)eyeCountVertical;
     
@@ -259,6 +252,15 @@ void testApp::initEyes(){
 		}
 	}
     bEyesInitialized = true;
+}
+
+void testApp::clearEyes(){
+    if (eyes.size() > 0) {
+        for (int i=0; i<eyes.size(); i++) {
+            delete eyes[i];
+        }
+    }
+    eyes.clear();
 }
 
 //--------------------------------------------------------------
@@ -344,6 +346,9 @@ void testApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void testApp::exit(){
+    
+    clearEyes();
+    
     gui->saveSettings("GUI/guiSettings.xml");
     delete gui;
 }

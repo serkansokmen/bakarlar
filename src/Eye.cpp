@@ -44,8 +44,7 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 			tarPx[index * 4 + 3] = a;
 		}
 	}
-    delete c;
-	
+    
 	pupilImg.setFromPixels(tarPx, pupilImg.width, pupilImg.height, OF_IMAGE_COLOR_ALPHA);
 	
     
@@ -57,6 +56,9 @@ void Eye::setup(const ofVec2f &p, float w, float h)
     whiteImg.resize(eyeRadius, eyeRadius);
 	shadeImg.resize(eyeRadius, eyeRadius);
 	pupilImg.resize(pupilWidth, pupilHeight);
+    
+    delete tarPx;
+    delete c;
 }
 
 void Eye::update(){
