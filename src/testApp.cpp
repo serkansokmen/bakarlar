@@ -13,7 +13,7 @@ void testApp::setup(){
 	ofSetFrameRate(50);
 	ofSetVerticalSync(true);
     ofEnableSmoothing();
-    ofSetLogLevel(OF_LOG_NOTICE);
+    ofSetLogLevel(OF_LOG_VERBOSE);
 	
     bDebugMode = true;
     bEyesInitialized = false;
@@ -118,11 +118,10 @@ void testApp::draw(){
         ofSetColor(255, 25);
         ofCircle(lookAtCentroid, 40);
         ofPopStyle();
+        gui->setVisible(true);
+    } else {
+        gui->setVisible(false);
     }
-
-#ifdef USE_OSC
-    gui->setVisible(false);
-#endif
     
     if (gui->isVisible()) {
         gui->draw();
@@ -279,8 +278,6 @@ void testApp::setupGui(){
     gui->addSpacer();
     gui->addSlider("HORIZONTAL", 1.0f, MAX_EYES_HORIZONTAL, &eyeCountHorizontal);
     gui->addSlider("VERTICAL", 1.0f, MAX_EYES_VERTICAL, &eyeCountVertical);
-    gui->addLabelToggle("DEBUG MODE", &bDebugMode);
-    
     gui->addSpacer();
     gui->addLabelToggle("INIT", &bEyesInitialized);
     
