@@ -11,8 +11,6 @@ class Eye
     float eyeRadius;
 	
 	ofVec2f pupilPos;
-	ofVec2f centerPos;
-    
   	float   catchUpSpeed;
 	
 public:
@@ -23,6 +21,9 @@ public:
 	void draw(bool *debugMode);
 	
 	void lookAt(const ofVec2f &p);
+    void rest();
+    
+ 	ofVec2f centerPos;
     
     ofImage surfaceImg;
 	ofImage whiteImg;

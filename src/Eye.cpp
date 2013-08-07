@@ -84,7 +84,7 @@ void Eye::draw(bool *debugMode){
         ofLine(-length, 0, length, 0);
         ofLine(0, length, 0, -length);
         ofPopMatrix();
-        ofDrawBitmapString(ofToString(pupilPos), pupilPos - eyeRadius * .1f);
+//        ofDrawBitmapString(ofToString(pupilPos), pupilPos - eyeRadius * .1f);
 		
         ofPopStyle();
         
@@ -110,6 +110,12 @@ void Eye::lookAt(const ofVec2f &p){
 	ofVec2f v = centerPos.getInterpolated(p, perc);
     
     pupilPos.set(catchUpSpeed * v + (1-catchUpSpeed) * pupilPos);
+}
+
+void Eye::rest(){
+    
+    pupilPos.set(catchUpSpeed * centerPos + (1-catchUpSpeed) * pupilPos);
+    pupilPos.set(centerPos);
 }
 
 Eye::~Eye() {

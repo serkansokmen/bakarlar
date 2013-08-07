@@ -1,0 +1,25 @@
+<Widget>
+    <Kind>4</Kind>
+    <Name>HORIZONTAL</Name>
+    <Value>11.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>VERTICAL</Name>
+    <Value>12.000000000</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>DEBUG MODE</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>17</Kind>
+    <Name>INIT</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>FPS</Name>
+    <Value>47.785362244</Value>
+</Widget>

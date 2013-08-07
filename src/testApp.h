@@ -5,9 +5,12 @@
 #include "ofxFlob.h"
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
+#include "ofxOsc.h"
 #include "Eye.h"
 
 //#define USE_KINECT
+//#define USE_BLOB_DETECTION
+#define USE_OSC
 
 class testApp : public ofBaseApp
 {
@@ -18,22 +21,31 @@ public:
 	void draw();
 	void keyPressed(int key);
 	void windowResized(int w, int h);
-    void mousePressed(int x, int y);
     void initEyes();
     void clearEyes();
     void setupGui();
     void guiEvent(ofxUIEventArgs &e);
     void exit();
-
-	float	eyeCountHorizontal;
-	float	eyeCountVertical;
+    
+    void    updateEyes();
+    
+	float	eyeCountHorizontal, eyeCountVertical;
+    float	eyeSize;
+    int     maxEyesHorizontal, maxEyesVertical;
     bool    bDebugMode, bEyesInitialized;
-    float	minSize;
+    
+    vector	<Eye*>	eyes;
+    
+    ofImage surfaceImg;
+	ofImage whiteImg;
+	ofImage pupilImg;
+	ofImage shadeImg;
+    ofFbo   eyesFbo;
 
 #ifdef USE_KINECT
     ofxKinect kinect;
     
-    ofxCvColorImage colorImg;
+    ofxCvColorImage colorImg; // color image
 	
 	ofxCvGrayscaleImage grayImage; // grayscale depth image
 	ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
@@ -44,24 +56,25 @@ public:
     int nearThreshold;
 	int farThreshold;
 #endif
+    
+#ifdef USE_OSC
+    ofxOscReceiver  oscReceiver;
+#endif
+    
 
-	vector	<Eye*>	eyes;
+#ifdef USE_BLOB_DETECTION
+	ofVideoGrabber  vidGrabber;
+    Flob            flob;
+    vector<ABlob*>  *blobs;
+    bool            bDrawFlob;
+    float           threshold;
+    float           fade;
+    bool            bClearBackground;
+#endif
     
-    ofImage surfaceImg;
-	ofImage whiteImg;
-	ofImage pupilImg;
-	ofImage shadeImg;
-
-	ofVideoGrabber vidGrabber;
-    Flob flob;
-    vector<ABlob*> *blobs;
-    bool bDrawFlob;
-    float threshold;
-    float fade;
-    bool bClearBackground;
+    // Eyes follow here
+    ofVec2f     lookAtCentroid;
     
-    ofVec2f lookAtCentroid;
-    bool bFollowMouse;
-    
+    // GUI
     ofxUICanvas *gui;
 };
