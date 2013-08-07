@@ -1,12 +1,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>HORIZONTAL</Name>
-    <Value>11.000000000</Value>
+    <Value>4.137930870</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>VERTICAL</Name>
-    <Value>12.000000000</Value>
+    <Value>4.379310608</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
@@ -21,5 +21,5 @@
 <Widget>
     <Kind>4</Kind>
     <Name>FPS</Name>
-    <Value>47.785362244</Value>
+    <Value>47.855350494</Value>
 </Widget>
