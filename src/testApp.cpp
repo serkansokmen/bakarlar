@@ -13,6 +13,7 @@ void testApp::setup(){
 	ofSetFrameRate(50);
 	ofSetVerticalSync(true);
     ofEnableSmoothing();
+    ofSetLogLevel(OF_LOG_NOTICE);
 	
     bDebugMode = true;
     bEyesInitialized = false;
@@ -60,13 +61,224 @@ void testApp::setup(){
 }
 
 //--------------------------------------------------------------
+void testApp::update(){
+    
+    eyeCountHorizontal = (int)eyeCountHorizontal;
+    eyeCountVertical = (int)eyeCountVertical;
+    
+    if (!bEyesInitialized){
+        eyes.clear();
+		initEyes();
+	} else {
+        updateEyes();
+	}
+}
+
+//--------------------------------------------------------------
+void testApp::draw(){
+
+    if (bEyesInitialized) {
+        eyesFbo.begin();
+        ofBackground(0);
+        for (int i=0; i<eyes.size(); i++) {
+            eyes[i]->draw(&bDebugMode);
+        }
+        eyesFbo.end();
+    }
+    
+    eyesFbo.draw(0, 0, ofGetWidth(), ofGetHeight());
+    
+#ifdef USE_BLOB_DETECTION
+    if (bDrawFlob) {
+        //        ofSetColor(255, 75);
+        //        flob.draw();
+        
+        if (blobs != NULL){
+            for (int i=0; i<blobs->size();i++){
+                ABlob & ab  = *(blobs->at(i));
+                ofPushStyle();
+                ofNoFill();
+                ofSetColor(0, 0, 255, 200);
+                ofRect(ab.bx, ab.by, ab.dimx, ab.dimy);
+                ofFill();
+                ofSetColor(0, 255, 0, 150);
+                ofRect(ab.cx, ab.cy, 5, 5);
+                ofPopStyle();
+            }
+        }
+    }
+#endif
+    
+    if (bDebugMode) {
+        ofPushStyle();
+        ofNoFill();
+        ofSetColor(0, 175, 0, 255);
+        ofCircle(lookAtCentroid, 40);
+        ofFill();
+        ofSetColor(255, 25);
+        ofCircle(lookAtCentroid, 40);
+        ofPopStyle();
+    }
+
+#ifdef USE_OSC
+    gui->setVisible(false);
+#endif
+    
+    if (gui->isVisible()) {
+        gui->draw();
+        
+#ifdef USE_BLOB_DETECTION
+        flob.videotexmotion.draw(10, ofGetHeight() - camHeight + 120, camWidth/4, camHeight/4);
+#endif
+    }
+}
+
+//--------------------------------------------------------------
+void testApp::initEyes(){
+    
+    float eyeWidth = ofGetWidth() / MAX((int)eyeCountHorizontal, 1);
+	float eyeHeight = ofGetHeight() / MAX((int)eyeCountVertical, 1);
+    
+    eyeSize = MIN(eyeWidth, eyeHeight);
+    
+    for (int i = 0; i<(int)eyeCountHorizontal; i ++){
+		for (int j = 0; j<(int)eyeCountVertical; j++){
+
+			Eye * eye = new Eye;
+            // Set pixel data before eye setup
+			eye->surfaceImg.setFromPixels(surfaceImg.getPixelsRef());
+            eye->whiteImg.setFromPixels(whiteImg.getPixelsRef());
+            eye->pupilImg.setFromPixels(pupilImg.getPixelsRef());
+            eye->shadeImg.setFromPixels(shadeImg.getPixelsRef());
+            
+            float posX = i*eyeWidth + eyeSize*.5;
+            float posY = j*eyeHeight + eyeSize*.5;
+            
+            eye->setup(ofVec2f(posX, posY),eyeSize, eyeSize);
+			eyes.push_back(eye);
+            
+            ofLog(OF_LOG_VERBOSE, "Added eye j:" + ofToString(j) + ", i:" + ofToString(i));
+		}
+	}
+    bEyesInitialized = true;
+    
+    ofLog(OF_LOG_NOTICE, "eye initialization finished.");
+}
+
+//--------------------------------------------------------------
+void testApp::updateEyes(){
+    
+    bool    bLookAt = false;
+    float   catchUpSpeed = .12f;
+    ofVec2f lookAtVec;
+    
+#ifdef USE_BLOB_DETECTION
+    vidGrabber.update();
+    
+    // Average vector
+    ofVec2f tempVec;
+    
+    if (vidGrabber.isFrameNew()){
+        blobs = flob.calc(flob.binarize(vidGrabber.getPixels(), (int)vidGrabber.getWidth(), (int)vidGrabber.getHeight()));
+        
+        // Calculate centroid
+        if (blobs != NULL && blobs->size() > 0){
+            for (int n=0; n<blobs->size(); n++) {
+                ABlob &blob = *(blobs->at(n));
+                tempVec.set(blob.cx, blob.cy);
+                lookAtVec = lookAtVec + tempVec;
+            }
+            lookAtVec = lookAtVec / blobs->size();
+            
+            bLookAt = true;
+        } else {
+            lookAtVec.set(ofGetWidth()/2, ofGetHeight()/2);
+        }
+    }
+#endif
+    
+#ifdef USE_OSC
+    // check for waiting messages
+    while (oscReceiver.hasWaitingMessages()){
+        
+        // get the next message
+		ofxOscMessage m;
+		oscReceiver.getNextMessage(&m);
+        
+        // check for position message
+		if (m.getAddress() == "/controller/position"){
+			
+            float posX = ofMap(m.getArgAsFloat(1), 0.0f, 100.0f, 0.0f, ofGetWidth());
+            float posY = ofMap(m.getArgAsFloat(0), 0.0f, 100.0f, 0.0f, ofGetHeight());
+            
+            lookAtVec.set(posX, posY);
+            bLookAt = true;
+            
+            string msg = "";
+            msg += "position: " + ofToString(m.getArgAsFloat(0)) + ", " + ofToString(m.getArgAsFloat(1)) + "\n";
+            msg += "look at: " + ofToString(posX) + ", " + ofToString(posY);
+            
+            ofLog(OF_LOG_NOTICE, msg);
+		}
+        
+		// check for horizontal message
+		else if (m.getAddress() == "/controller/horizontal"){
+            
+            eyeCountHorizontal = (int)m.getArgAsFloat(0);
+            
+            ofLog(OF_LOG_NOTICE, "eye count horizontal: " + ofToString(eyeCountHorizontal));
+		}
+        
+        // check for vertical message
+		else if (m.getAddress() == "/controller/vertical"){
+			
+            eyeCountVertical = (int)m.getArgAsFloat(0);
+            
+            ofLog(OF_LOG_NOTICE, "eye count vertical: " + ofToString(eyeCountVertical));
+		}
+        
+        // check debug message
+		else if (m.getAddress() == "/controller/debug"){
+			bDebugMode = !(m.getArgAsFloat(0) == 0.0f);
+		}
+        
+        // check for init message
+		else if (m.getAddress() == "/controller/init"){
+			bEyesInitialized = !(m.getArgAsFloat(0) == 0.0f);
+            
+            ofLog(OF_LOG_NOTICE, "initializing eyes...");
+		}
+	}
+#endif
+    
+    if (bLookAt)
+        lookAtCentroid = catchUpSpeed * lookAtVec + (1-catchUpSpeed) * lookAtCentroid;
+    
+    for (int i=0; i<eyes.size(); i++){
+        Eye *eye = eyes[i];
+        eye->update();
+        eye->lookAt(lookAtCentroid);
+    }
+}
+
+//--------------------------------------------------------------
+void testApp::clearEyes(){
+    if (eyes.size() > 0) {
+        for (int i=0; i<eyes.size(); i++) {
+            delete eyes[i];
+        }
+    }
+    eyes.clear();
+}
+
+//--------------------------------------------------------------
 void testApp::setupGui(){
     
     gui = new ofxUICanvas();
     gui->addLabel("OBSERVERS");
     gui->addSpacer();
-    gui->addSlider("HORIZONTAL", 1.0f, 50, &eyeCountHorizontal);
-    gui->addSlider("VERTICAL", 1.0f, 50, &eyeCountVertical);
+    gui->addSlider("HORIZONTAL", 1.0f, MAX_EYES_HORIZONTAL, &eyeCountHorizontal);
+    gui->addSlider("VERTICAL", 1.0f, MAX_EYES_VERTICAL, &eyeCountVertical);
     gui->addLabelToggle("DEBUG MODE", &bDebugMode);
     
     gui->addSpacer();
@@ -74,7 +286,7 @@ void testApp::setupGui(){
     
     gui->addSpacer();
     gui->addFPSSlider("FPS");
-
+    
 #ifdef USE_BLOB_DETECTION
     vector<string> omNames;
     omNames.push_back("STATIC DIFFERENCE");
@@ -137,201 +349,6 @@ void testApp::setupGui(){
     gui->loadSettings("GUI/guiSettingsOSC.xml");
 #endif
     gui->setVisible(true);
-}
-
-//--------------------------------------------------------------
-void testApp::update(){
-    
-    eyeCountHorizontal = (int)eyeCountHorizontal;
-    eyeCountVertical = (int)eyeCountVertical;
-    
-    if (!bEyesInitialized){
-        eyes.clear();
-		initEyes();
-	} else {
-        updateEyes();
-	}
-}
-
-//--------------------------------------------------------------
-void testApp::draw(){
-
-    if (bEyesInitialized) {
-        eyesFbo.begin();
-        ofBackground(0);
-        for (int i=0; i<eyes.size(); i++) {
-            eyes[i]->draw(&bDebugMode);
-        }
-        eyesFbo.end();
-    }
-    
-    eyesFbo.draw(0, 0, ofGetWidth(), ofGetHeight());
-    
-#ifdef USE_BLOB_DETECTION
-    if (bDrawFlob) {
-        //        ofSetColor(255, 75);
-        //        flob.draw();
-        
-        if (blobs != NULL){
-            for (int i=0; i<blobs->size();i++){
-                ABlob & ab  = *(blobs->at(i));
-                ofPushStyle();
-                ofNoFill();
-                ofSetColor(0, 0, 255, 200);
-                ofRect(ab.bx, ab.by, ab.dimx, ab.dimy);
-                ofFill();
-                ofSetColor(0, 255, 0, 150);
-                ofRect(ab.cx, ab.cy, 5, 5);
-                ofPopStyle();
-            }
-        }
-    }
-#endif
-    
-    if (bDebugMode) {
-        ofPushStyle();
-        ofSetRectMode(OF_RECTMODE_CENTER);
-        ofNoFill();
-        ofSetColor(0, 175, 0, 255);
-        ofRect(lookAtCentroid.x, lookAtCentroid.y, 80, 80);
-        ofFill();
-        ofSetColor(255, 25);
-        ofRect(lookAtCentroid.x, lookAtCentroid.y, 80, 80);
-        ofPopStyle();
-    }
-
-    if (gui->isVisible()) {
-        gui->draw();
-#ifdef USE_BLOB_DETECTION
-        flob.videotexmotion.draw(10, ofGetHeight() - camHeight + 120, camWidth/4, camHeight/4);
-#endif
-    }
-}
-
-//--------------------------------------------------------------
-void testApp::initEyes(){
-    
-    float eyeWidth = ofGetWidth() / MAX((int)eyeCountHorizontal, 1);
-	float eyeHeight = ofGetHeight() / MAX((int)eyeCountVertical, 1);
-    
-    eyeSize = MIN(eyeWidth, eyeHeight);
-    
-    maxEyesHorizontal = (int)(ofGetWidth() / eyeWidth);
-    maxEyesVertical = (int)(ofGetHeight() / eyeHeight);
-    
-    for (int i = 0; i<(int)eyeCountHorizontal; i ++){
-		for (int j = 0; j<(int)eyeCountVertical; j++){
-
-			Eye * eye = new Eye;
-            // Set pixel data before eye setup
-			eye->surfaceImg.setFromPixels(surfaceImg.getPixelsRef());
-            eye->whiteImg.setFromPixels(whiteImg.getPixelsRef());
-            eye->pupilImg.setFromPixels(pupilImg.getPixelsRef());
-            eye->shadeImg.setFromPixels(shadeImg.getPixelsRef());
-            
-            float posX = i*eyeWidth + eyeSize*.5;
-            float posY = j*eyeHeight + eyeSize*.5;
-            
-            eye->setup(ofVec2f(posX, posY),eyeSize, eyeSize);
-			eyes.push_back(eye);
-            
-            cout << "Added eye j:" << j << ", i:" << i << endl;
-		}
-	}
-    bEyesInitialized = true;
-}
-
-//--------------------------------------------------------------
-void testApp::updateEyes(){
-    
-    bool    bLookAt = false;
-    float   catchUpSpeed = .12f;
-    ofVec2f lookAtVec;
-    
-#ifdef USE_BLOB_DETECTION
-    vidGrabber.update();
-    
-    // Average vector
-    ofVec2f tempVec;
-    
-    if (vidGrabber.isFrameNew()){
-        blobs = flob.calc(flob.binarize(vidGrabber.getPixels(), (int)vidGrabber.getWidth(), (int)vidGrabber.getHeight()));
-        
-        // Calculate centroid
-        if (blobs != NULL && blobs->size() > 0){
-            for (int n=0; n<blobs->size(); n++) {
-                ABlob &blob = *(blobs->at(n));
-                tempVec.set(blob.cx, blob.cy);
-                lookAtVec = lookAtVec + tempVec;
-            }
-            lookAtVec = lookAtVec / blobs->size();
-            
-            bLookAt = true;
-        } else {
-            lookAtVec.set(ofGetWidth()/2, ofGetHeight()/2);
-        }
-    }
-#endif
-    
-#ifdef USE_OSC
-    // check for waiting messages
-	while (oscReceiver.hasWaitingMessages()){
-        
-		// get the next message
-		ofxOscMessage m;
-		oscReceiver.getNextMessage(&m);
-        
-        // check for position message
-		if (m.getAddress() == "/controller/position"){
-			cout << "position: " << m.getArgAsFloat(0) << ", " << m.getArgAsFloat(1) << endl;
-            
-            float posX = ofMap(m.getArgAsFloat(1), 0.0f, 1.0f, 0.0f, ofGetWidth());
-            float posY = ofMap(m.getArgAsFloat(0), 0.0f, 1.0f, 0.0f, ofGetHeight());
-            
-            cout << "look at: " << posX << ", " << posY << endl;
-			lookAtVec.set(posX, posY);
-            bLookAt = true;
-		}
-		// check for horizontal message
-		else if (m.getAddress() == "/controller/horizontal"){
-            eyeCountHorizontal = ofMap(m.getArgAsFloat(0), 0.0f, 1.0f, 1, maxEyesHorizontal);
-            cout << "eye count horizontal: " << eyeCountHorizontal << endl;
-		}
-        // check for vertical message
-		else if (m.getAddress() == "/controller/vertical"){
-			eyeCountVertical = ofMap(m.getArgAsFloat(0), 0.0f, 1.0f, 1, maxEyesVertical);
-            cout << "eye count vertical: " << eyeCountVertical << endl;
-		}
-        // check debug message
-		else if (m.getAddress() == "/controller/debug"){
-			bDebugMode = !(m.getArgAsFloat(0) == 0.0f);
-		}
-        // check for init message
-		else if (m.getAddress() == "/controller/init"){
-			cout << "init: " << m.getArgAsFloat(0) << endl;
-            bEyesInitialized = !(m.getArgAsFloat(0) == 0.0f);
-		}
-	}
-#endif
-    
-    if (bLookAt)
-        lookAtCentroid = catchUpSpeed * lookAtVec + (1-catchUpSpeed) * lookAtCentroid;
-    
-    for (int i=0; i<eyes.size(); i++){
-        Eye *eye = eyes[i];
-        eye->update();
-        eye->lookAt(lookAtCentroid);
-    }
-}
-
-//--------------------------------------------------------------
-void testApp::clearEyes(){
-    if (eyes.size() > 0) {
-        for (int i=0; i<eyes.size(); i++) {
-            delete eyes[i];
-        }
-    }
-    eyes.clear();
 }
 
 //--------------------------------------------------------------

@@ -12,6 +12,9 @@
 //#define USE_BLOB_DETECTION
 #define USE_OSC
 
+#define MAX_EYES_HORIZONTAL 32
+#define MAX_EYES_VERTICAL   20
+
 class testApp : public ofBaseApp
 {
 
@@ -31,7 +34,6 @@ public:
     
 	float	eyeCountHorizontal, eyeCountVertical;
     float	eyeSize;
-    int     maxEyesHorizontal, maxEyesVertical;
     bool    bDebugMode, bEyesInitialized;
     
     vector	<Eye*>	eyes;
