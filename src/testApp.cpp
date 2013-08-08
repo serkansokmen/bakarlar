@@ -15,7 +15,6 @@ void testApp::setup(){
     ofEnableSmoothing();
     ofSetLogLevel(OF_LOG_VERBOSE);
 	
-    bDebugMode = true;
     bEyesInitialized = false;
     
     surfaceImg.loadImage("surface1.png");
@@ -33,6 +32,7 @@ void testApp::setup(){
     threshold = 17.5f;
     fade = 27.0f;
     bDrawFlob = true;
+    bDebugMode = true;
     
     blobs = NULL;
 	vidGrabber.setVerbose(true);
@@ -55,13 +55,16 @@ void testApp::setup(){
     flob.mirrorY = false;
 #endif
     
-    lookAtCentroid.set(ofGetWidth()/2, ofGetHeight()/2);
+    // Prevent jumpy tweens
+    Tweener.setMode(TWEENMODE_OVERRIDE);
     
     initEyes();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
+    
+    Tweener.update();
     
     eyeCountHorizontal = (int)eyeCountHorizontal;
     eyeCountVertical = (int)eyeCountVertical;
@@ -113,10 +116,10 @@ void testApp::draw(){
         ofPushStyle();
         ofNoFill();
         ofSetColor(0, 175, 0, 255);
-        ofCircle(lookAtCentroid, 40);
+        ofCircle(debugCirclePos, 40);
         ofFill();
         ofSetColor(255, 25);
-        ofCircle(lookAtCentroid, 40);
+        ofCircle(debugCirclePos, 40);
         ofPopStyle();
         gui->setVisible(true);
     } else {
@@ -150,10 +153,10 @@ void testApp::initEyes(){
             eye->pupilImg.setFromPixels(pupilImg.getPixelsRef());
             eye->shadeImg.setFromPixels(shadeImg.getPixelsRef());
             
-            float posX = i*eyeWidth + eyeSize*.5;
-            float posY = j*eyeHeight + eyeSize*.5;
+            float posX = i*eyeWidth;
+            float posY = j*eyeHeight;
             
-            eye->setup(ofVec2f(posX, posY),eyeSize, eyeSize);
+            eye->setup(ofVec2f(posX, posY), eyeSize, eyeSize);
 			eyes.push_back(eye);
             
             ofLog(OF_LOG_VERBOSE, "Added eye j:" + ofToString(j) + ", i:" + ofToString(i));
@@ -167,36 +170,61 @@ void testApp::initEyes(){
 //--------------------------------------------------------------
 void testApp::updateEyes(){
     
-    bool    bLookAt = false;
-    float   catchUpSpeed = .12f;
-    ofVec2f lookAtVec;
+    float lookX = ofGetWidth() * .5;
+    float lookY = ofGetHeight() * .5;
     
 #ifdef USE_BLOB_DETECTION
-    vidGrabber.update();
     
-    // Average vector
-    ofVec2f tempVec;
+    vidGrabber.update();
+    ofVec2f lookAtVec;
     
     if (vidGrabber.isFrameNew()){
         blobs = flob.calc(flob.binarize(vidGrabber.getPixels(), (int)vidGrabber.getWidth(), (int)vidGrabber.getHeight()));
         
         // Calculate centroid
         if (blobs != NULL && blobs->size() > 0){
+            
+            ofVec2f *tempVec = new ofVec2f;
+            
             for (int n=0; n<blobs->size(); n++) {
+                
                 ABlob &blob = *(blobs->at(n));
-                tempVec.set(blob.cx, blob.cy);
-                lookAtVec = lookAtVec + tempVec;
+                
+                tempVec->set(blob.cx, blob.cy);
+                lookAtVec = lookAtVec + *tempVec;
             }
             lookAtVec = lookAtVec / blobs->size();
             
-            bLookAt = true;
+            delete tempVec;
+            
         } else {
             lookAtVec.set(ofGetWidth()/2, ofGetHeight()/2);
+        }
+        lookAtCentroid.set(lookAtVec);
+        
+        for (int i=0; i<eyes.size(); i++){
+            eyes[i]->lookAt(lookAtCentroid);
+        }
+    } else {
+        for (int i=0; i<eyes.size(); i++){
+            eyes[i]->rest();
         }
     }
 #endif
     
 #ifdef USE_OSC
+    float posX = ofGetWidth()*.5;
+    float posY = ofGetHeight()*.5;
+    
+    lookAtCentroid.set(posX, posY);
+    
+    if (!oscReceiver.hasWaitingMessages()){
+        for (int i=0; i<eyes.size(); i++){
+            eyes[i]->rest();
+        }
+    }
+    
+    
     // check for waiting messages
     while (oscReceiver.hasWaitingMessages()){
         
@@ -207,11 +235,17 @@ void testApp::updateEyes(){
         // check for position message
 		if (m.getAddress() == "/controller/position"){
 			
-            float posX = ofMap(m.getArgAsFloat(1), 0.0f, 100.0f, 0.0f, ofGetWidth());
-            float posY = ofMap(m.getArgAsFloat(0), 0.0f, 100.0f, 0.0f, ofGetHeight());
+            posX = ofMap(m.getArgAsFloat(1), 0.0f, 100.0f, 0.0f, ofGetWidth());
+            posY = ofMap(m.getArgAsFloat(0), 0.0f, 100.0f, 0.0f, ofGetHeight());
             
-            lookAtVec.set(posX, posY);
-            bLookAt = true;
+            lookAtCentroid.set(posX, posY);
+            
+            Tweener.addTween(debugCirclePos.x, lookAtCentroid.x, .1, &ofxTransitions::easeInOutSine);
+            Tweener.addTween(debugCirclePos.y, lookAtCentroid.y, .1, &ofxTransitions::easeInOutSine);
+            
+            for (int i=0; i<eyes.size(); i++){
+                eyes[i]->lookAt(lookAtCentroid);
+            }
             
             string msg = "";
             msg += "position: " + ofToString(m.getArgAsFloat(0)) + ", " + ofToString(m.getArgAsFloat(1)) + "\n";
@@ -248,16 +282,8 @@ void testApp::updateEyes(){
             ofLog(OF_LOG_NOTICE, "initializing eyes...");
 		}
 	}
+    
 #endif
-    
-    if (bLookAt)
-        lookAtCentroid = catchUpSpeed * lookAtVec + (1-catchUpSpeed) * lookAtCentroid;
-    
-    for (int i=0; i<eyes.size(); i++){
-        Eye *eye = eyes[i];
-        eye->update();
-        eye->lookAt(lookAtCentroid);
-    }
 }
 
 //--------------------------------------------------------------
@@ -345,6 +371,9 @@ void testApp::setupGui(){
 #ifdef USE_OSC
     gui->loadSettings("GUI/guiSettingsOSC.xml");
 #endif
+#ifdef USE_MOUSE
+    gui->loadSettings("GUI/guiSettings.xml");
+#endif
     gui->setVisible(true);
 }
 
@@ -419,10 +448,37 @@ void testApp::guiEvent(ofxUIEventArgs &e){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    if (key=='s') {
-        gui->toggleVisible();
+    if (key == 'd') {
+        bDebugMode = !bDebugMode;
     }
 }
+
+
+//--------------------------------------------------------------
+#ifdef USE_MOUSE
+void testApp::mousePressed(int x, int y, int button){
+    lookAtCentroid.set(x, y);
+    
+    Tweener.addTween(debugCirclePos.x, lookAtCentroid.x, .1, &ofxTransitions::easeInOutSine);
+    Tweener.addTween(debugCirclePos.y, lookAtCentroid.y, .1, &ofxTransitions::easeInOutSine);
+    
+    for (int i=0; i<eyes.size(); i++){
+        eyes[i]->lookAt(lookAtCentroid);
+    }
+}
+
+//--------------------------------------------------------------
+void testApp::mouseReleased(int x, int y, int button){
+    lookAtCentroid.set(x, y);
+    
+    Tweener.addTween(debugCirclePos.x, lookAtCentroid.x, .1, &ofxTransitions::easeInOutSine);
+    Tweener.addTween(debugCirclePos.y, lookAtCentroid.y, .1, &ofxTransitions::easeInOutSine);
+    
+    for (int i=0; i<eyes.size(); i++){
+        eyes[i]->rest();
+    }
+}
+#endif
 
 
 //--------------------------------------------------------------
@@ -445,5 +501,9 @@ void testApp::exit(){
 #ifdef USE_OSC
     gui->saveSettings("GUI/guiSettingsOSC.xml");
 #endif
+#ifdef USE_MOUSE
+    gui->saveSettings("GUI/guiSettings.xml");
+#endif
+    
     delete gui;
 }

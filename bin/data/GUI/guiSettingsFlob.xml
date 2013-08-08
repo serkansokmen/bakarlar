@@ -10,18 +10,13 @@
 </Widget>
 <Widget>
     <Kind>17</Kind>
-    <Name>DEBUG MODE</Name>
-    <Value>0</Value>
-</Widget>
-<Widget>
-    <Kind>17</Kind>
     <Name>INIT</Name>
     <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>FPS</Name>
-    <Value>48.255401611</Value>
+    <Value>41.810863495</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>

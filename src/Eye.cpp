@@ -10,7 +10,6 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 	pupilPos.set(centerPos);
 	
     eyeRadius = min(eyeWidth, eyeHeight);
-	catchUpSpeed = .12f;
     
     int numPixels			= pupilImg.width * pupilImg.height * 4;
 	unsigned char * px		= pupilImg.getPixels();
@@ -61,10 +60,6 @@ void Eye::setup(const ofVec2f &p, float w, float h)
     delete c;
 }
 
-void Eye::update(){
-    
-}
-
 void Eye::draw(bool *debugMode){
 	
     float cx = eyeRadius/2;
@@ -75,50 +70,52 @@ void Eye::draw(bool *debugMode){
         ofPushStyle();
         ofNoFill();
         ofSetColor(100);
-        ofCircle(centerPos, eyeRadius * .4f);
+        ofCircle(centerPos + eyeRadius*.5, eyeRadius * .4f);
         
         ofSetColor(255);
         ofPushMatrix();
-        ofTranslate(pupilPos);
+        ofTranslate(eyeRadius*.5 + pupilPos);
         float length = eyeRadius * .1f;
         ofLine(-length, 0, length, 0);
         ofLine(0, length, 0, -length);
         ofPopMatrix();
-//        ofDrawBitmapString(ofToString(pupilPos), pupilPos - eyeRadius * .1f);
-		
+        
         ofPopStyle();
         
 	} else {
-        ofSetRectMode(OF_RECTMODE_CENTER);
-
+        
         ofPushStyle();
         ofSetColor(255, 255);
-        
 		whiteImg.draw(centerPos);
-		pupilImg.draw(pupilPos.x, pupilPos.y);
+        ofSetRectMode(OF_RECTMODE_CENTER);
+		pupilImg.draw(eyeRadius*.5 + pupilPos);
+        ofSetRectMode(OF_RECTMODE_CORNER);
 		surfaceImg.draw(centerPos);
 		shadeImg.draw(centerPos);
-        
         ofPopStyle();
-		ofSetRectMode(OF_RECTMODE_CORNER);
+        
 	}
 }
 
 void Eye::lookAt(const ofVec2f &p){
     
-    float perc = ofNormalize(eyeRadius / 4, 0, ofGetHeight());
+    float delay     = ofRandom(0.1f, 1.0f);
+    float perc      = ofNormalize(eyeRadius * .25, 0, ofGetHeight());
+    float duration  = ofRandom(perc*10) + 0.2f;
+    
 	ofVec2f v = centerPos.getInterpolated(p, perc);
     
-    pupilPos.set(catchUpSpeed * v + (1-catchUpSpeed) * pupilPos);
+    
+    Tweener.addTween(pupilPos.x, v.x, duration, &ofxTransitions::easeInOutSine, delay);
+    Tweener.addTween(pupilPos.y, v.y, duration, &ofxTransitions::easeInOutSine, delay);
 }
 
 void Eye::rest(){
     
-    pupilPos.set(catchUpSpeed * centerPos + (1-catchUpSpeed) * pupilPos);
-    pupilPos.set(centerPos);
-}
-
-Eye::~Eye() {
-    
+//    if (pupilPos == centerPos)
+//        return;
+    float delay = ofRandom(0.0f, 1.0f);
+    Tweener.addTween(pupilPos.x, centerPos.x, 1.0f, &ofxTransitions::easeOutSine, delay);
+    Tweener.addTween(pupilPos.y, centerPos.y, 1.0f, &ofxTransitions::easeOutSine, delay);
 }
 

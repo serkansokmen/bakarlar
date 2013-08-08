@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxTweener.h"
 
 
 class Eye
@@ -11,13 +12,10 @@ class Eye
     float eyeRadius;
 	
 	ofVec2f pupilPos;
-  	float   catchUpSpeed;
 	
 public:
-    ~Eye();
     
     void setup(const ofVec2f &p, float w, float h);
-	void update();
 	void draw(bool *debugMode);
 	
 	void lookAt(const ofVec2f &p);

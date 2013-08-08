@@ -6,11 +6,13 @@
 #include "ofxKinect.h"
 #include "ofxOpenCv.h"
 #include "ofxOsc.h"
+#include "ofxTweener.h"
 #include "Eye.h"
 
 //#define USE_KINECT
 //#define USE_BLOB_DETECTION
-#define USE_OSC
+//#define USE_OSC
+#define USE_MOUSE
 
 #define MAX_EYES_HORIZONTAL 32
 #define MAX_EYES_VERTICAL   20
@@ -23,6 +25,10 @@ public:
 	void update();
 	void draw();
 	void keyPressed(int key);
+#ifdef USE_MOUSE
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+#endif
 	void windowResized(int w, int h);
     void initEyes();
     void clearEyes();
@@ -37,6 +43,9 @@ public:
     bool    bDebugMode, bEyesInitialized;
     
     vector	<Eye*>	eyes;
+    // Eyes follow here
+    ofVec2f lookAtCentroid;
+    ofVec2f debugCirclePos;
     
     ofImage surfaceImg;
 	ofImage whiteImg;
@@ -73,9 +82,6 @@ public:
     float           fade;
     bool            bClearBackground;
 #endif
-    
-    // Eyes follow here
-    ofVec2f     lookAtCentroid;
     
     // GUI
     ofxUICanvas *gui;
