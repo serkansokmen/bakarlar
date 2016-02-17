@@ -12,6 +12,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     ofBackground(0);
     ofSetFrameRate(60);
+    ofSetWindowTitle("Bakarlar");
     
     float camW = 640;
     float camH = 480;
@@ -32,8 +33,6 @@ void ofApp::setup(){
     // an object can move up to 50 pixels per frame
     tracker.setMaximumDistance(50);
     
-    eyeGrid.setup(ofGetWindowRect(), 7, 6);
-    
     lookAtPoint.setDuration(.4);
     lookAtPoint.setPosition(ofPoint::zero());
     lookAtPoint.setRepeatType(PLAY_ONCE);
@@ -43,9 +42,17 @@ void ofApp::setup(){
     bTracking = true;
     
     gui.setup();
+    gui.setName("Settings");
+    gui.add(cols.set("Columns", 7, 1, 16));
+    gui.add(rows.set("Rows", 6, 1, 16));
     gui.add(threshold.set("Threshold", 15, 0, 255));
     gui.add(bTracking.set("Track", false));
     gui.add(bDebugMode.set("Debug", true));
+    
+    cols.addListener(this, &ofApp::setCols);
+    rows.addListener(this, &ofApp::setRows);
+    
+    gui.loadFromFile("settings.xml");
     
     bDrawGui = true;
 }
@@ -107,4 +114,12 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
     lookAtPoint.animateTo(ofVec2f(x, y));
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+    cols.removeListener(this, &ofApp::setCols);
+    rows.removeListener(this, &ofApp::setRows);
+    
+    gui.saveToFile("settings.xml");
 }
