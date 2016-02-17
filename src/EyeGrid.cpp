@@ -5,8 +5,8 @@ void EyeGrid::setup(const ofRectangle& rect, int c, int r){
     
     float edgeLength = MIN(rect.getWidth(), rect.getHeight());
     
-    this->width = edgeLength;
-    this->height = edgeLength;
+    this->width = rect.getWidth();
+    this->height = rect.getHeight();
     this->cols = MAX((int)c, 1);
     this->rows = MAX((int)r, 1);
     
@@ -32,10 +32,14 @@ void EyeGrid::update(const ofPoint& lookAt){
 
 //--------------------------------------------------------------
 void EyeGrid::draw(const bool& debugMode){
+    
+    eyesFbo.begin();
+    ofClear(0, 0, 0, 0);
     ofSetColor(ofColor::white);
     for (auto & eye : eyes) {
         eye->draw(debugMode);
     }
+    eyesFbo.end();
     
     eyesFbo.draw(0, 0, this->width, this->height);
 }
@@ -68,6 +72,7 @@ void EyeGrid::setupEyes(){
     }
 }
 
+//--------------------------------------------------------------
 void EyeGrid::setupEyes(int cols, int rows){
     this->cols = cols;
     this->rows = rows;
