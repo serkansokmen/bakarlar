@@ -32,7 +32,7 @@ void ofApp::setup(){
     // an object can move up to 50 pixels per frame
     tracker.setMaximumDistance(50);
     
-    eyeGrid.setup(ofGetWindowRect(), 5, 5, 0.5);
+    eyeGrid.setup(ofGetWindowRect(), 7, 6);
     
     lookAtPoint.setDuration(.4);
     lookAtPoint.setPosition(ofPoint::zero());
@@ -46,6 +46,8 @@ void ofApp::setup(){
     gui.add(threshold.set("Threshold", 15, 0, 255));
     gui.add(bTracking.set("Track", false));
     gui.add(bDebugMode.set("Debug", true));
+    
+    bDrawGui = true;
 }
 
 //--------------------------------------------------------------
@@ -76,27 +78,30 @@ void ofApp::update(){
     
     float dt = 1.0f / 60.0f;
     lookAtPoint.update(dt);
+    
     eyeGrid.update(lookAtPoint.getCurrentPosition());
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofPushMatrix();
-    ofTranslate((ofGetWidth()-eyeGrid.getWidth())/2, (ofGetHeight()-eyeGrid.getHeight())/2);
     ofSetColor(ofColor::white);
     eyeGrid.draw(bDebugMode);
+    
     lookAtPoint.draw();
-    ofPopMatrix();
     
     trackerFbo.draw(0, 0, 320, 240);
     
-    
-    gui.draw();
+    if (bDrawGui) {
+        gui.draw();
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+    if (key == 's') {
+        bDrawGui = !bDrawGui;
+    }
 }
 
 //--------------------------------------------------------------

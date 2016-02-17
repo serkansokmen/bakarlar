@@ -16,6 +16,7 @@ class Eye
 public:
     
     void setup(const ofVec2f& pos, float w, float h);
+    void update();
 	void draw(const bool& debugMode);
 	
 	void lookAt(const ofVec2f& pos, float gridSize);

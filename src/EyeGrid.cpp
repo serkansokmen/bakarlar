@@ -1,18 +1,17 @@
 #include "EyeGrid.h"
 
 //--------------------------------------------------------------
-void EyeGrid::setup(const ofRectangle& rect, int c, int r, float rad){
+void EyeGrid::setup(const ofRectangle& rect, int c, int r){
     
     float edgeLength = MIN(rect.getWidth(), rect.getHeight());
     
     this->width = edgeLength;
     this->height = edgeLength;
-    this->cols = c;
-    this->rows = r;
-    this->eyeRadius = rad;
+    this->cols = MAX((int)c, 1);
+    this->rows = MAX((int)r, 1);
     
-    float eyeWidth = this->width/ MAX((int)c, 1);
-    float eyeHeight = this->height / MAX((int)r, 1);
+    float eyeWidth = this->width / this->cols;
+    float eyeHeight = this->height / this->rows;
     this->eyeRadius = MIN(eyeWidth, eyeHeight);
     
     surfaceImg.load("surface1.png");
@@ -20,20 +19,21 @@ void EyeGrid::setup(const ofRectangle& rect, int c, int r, float rad){
     pupilImg.load("pupil1.png");
     shadeImg.load("shade1.png");
     
-    initEyes();
+    setupEyes();
 }
 
 //--------------------------------------------------------------
 void EyeGrid::update(const ofPoint& lookAt){
-    for (auto eye : eyes) {
+    for (auto & eye : eyes) {
         eye->lookAt(lookAt, MAX(this->width, this->height) * this->eyeRadius);
+        eye->update();
     }
 }
 
 //--------------------------------------------------------------
 void EyeGrid::draw(const bool& debugMode){
     ofSetColor(ofColor::white);
-    for (auto eye : eyes) {
+    for (auto & eye : eyes) {
         eye->draw(debugMode);
     }
     
@@ -41,13 +41,14 @@ void EyeGrid::draw(const bool& debugMode){
 }
 
 //--------------------------------------------------------------
-void EyeGrid::initEyes(){
+void EyeGrid::setupEyes(){
     eyesFbo.allocate(this->width, this->height);
     eyesFbo.begin();
     ofClear(0,0,0,0);
     ofSetColor(ofColor::white);
     eyesFbo.end();
     
+    eyes.clear();
     for (int i = 0; i<(int)this->cols; i ++){
         for (int j = 0; j<(int)this->rows; j++){
             
@@ -62,9 +63,15 @@ void EyeGrid::initEyes(){
                        this->eyeRadius);
             eyes.push_back(eye);
             
-            ofLog(OF_LOG_VERBOSE, "Added eye j:" + ofToString(j) + ", i:" + ofToString(i));
+            ofLog(OF_LOG_VERBOSE, "Eye column:" + ofToString(j) + ", row:" + ofToString(i));
         }
     }
+}
+
+void EyeGrid::setupEyes(int cols, int rows){
+    this->cols = cols;
+    this->rows = rows;
+    this->setupEyes();
 }
 
 //--------------------------------------------------------------

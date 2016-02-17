@@ -6,7 +6,7 @@
 
 class EyeGrid {
     
-    void initEyes();
+    void setupEyes();
     
     ofImage surfaceImg;
     ofImage whiteImg;
@@ -25,7 +25,8 @@ public:
         eyes.clear();
     };
     
-    void setup(const ofRectangle& rect, int cols, int rows, float eyeRadius);
+    void setup(const ofRectangle& rect, int cols, int rows);
+    void setupEyes(int cols, int rows);
     void update(const ofPoint &lookAt);
     void draw(const bool& debugMode);
     void rest();

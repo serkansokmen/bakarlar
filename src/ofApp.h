@@ -32,4 +32,6 @@ public:
     ofParameter<float>      threshold;
     ofParameter<bool>       bTracking;
     ofParameter<bool>       bDebugMode;
+    
+    bool bDrawGui;
 };

@@ -56,6 +56,9 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 	pupilImg.resize(pupilWidth, pupilHeight);
 }
 
+void Eye::update(){
+}
+
 void Eye::draw(const bool& debugMode){
 	
     float cx = eyeRadius/2;
@@ -68,14 +71,13 @@ void Eye::draw(const bool& debugMode){
         ofSetColor(100);
         ofDrawCircle(centerPos + eyeRadius*.5, eyeRadius * .4f);
         
-        ofSetColor(255);
         ofPushMatrix();
+        ofSetColor(255);
         ofTranslate(eyeRadius*.5 + pupilPos);
         float length = eyeRadius * .1f;
         ofDrawLine(-length, 0, length, 0);
         ofDrawLine(0, length, 0, -length);
         ofPopMatrix();
-        
         ofPopStyle();
         
 	} else {
