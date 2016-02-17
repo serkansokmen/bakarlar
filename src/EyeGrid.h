@@ -14,9 +14,9 @@ class EyeGrid {
     ofImage shadeImg;
     ofFbo   eyesFbo;
     
-    int cols, rows;
     float width, height;
     float eyeRadius;
+    int   cols, rows;
     
     vector<shared_ptr<Eye> >       eyes;
     
@@ -25,8 +25,15 @@ public:
         eyes.clear();
     };
     
-    void setup(float gridWidth, float gridHeight, int cols, int rows, float eyeRadius);
+    void setup(const ofRectangle& rect, int cols, int rows, float eyeRadius);
     void update(const ofPoint &lookAt);
     void draw(const bool& debugMode);
     void rest();
+    
+    inline float getWidth(){
+        return this->width;
+    };
+    inline float getHeight(){
+        return this->height;
+    };
 };

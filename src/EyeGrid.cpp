@@ -1,16 +1,18 @@
 #include "EyeGrid.h"
 
 //--------------------------------------------------------------
-void EyeGrid::setup(float w, float h, int c, int r, float rad){
+void EyeGrid::setup(const ofRectangle& rect, int c, int r, float rad){
     
-    this->width = w;
-    this->height = h;
+    float edgeLength = MIN(rect.getWidth(), rect.getHeight());
+    
+    this->width = edgeLength;
+    this->height = edgeLength;
     this->cols = c;
     this->rows = r;
     this->eyeRadius = rad;
     
-    float eyeWidth = w / MAX((int)c, 1);
-    float eyeHeight = h / MAX((int)r, 1);
+    float eyeWidth = this->width/ MAX((int)c, 1);
+    float eyeHeight = this->height / MAX((int)r, 1);
     this->eyeRadius = MIN(eyeWidth, eyeHeight);
     
     surfaceImg.load("surface1.png");

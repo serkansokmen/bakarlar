@@ -32,7 +32,7 @@ void ofApp::setup(){
     // an object can move up to 50 pixels per frame
     tracker.setMaximumDistance(50);
     
-    eyeGrid.setup(ofGetWidth(), ofGetHeight(), 5, 5, 0.5);
+    eyeGrid.setup(ofGetWindowRect(), 5, 5, 0.5);
     
     lookAtPoint.setDuration(.4);
     lookAtPoint.setPosition(ofPoint::zero());
@@ -82,9 +82,12 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    ofPushMatrix();
+    ofTranslate((ofGetWidth()-eyeGrid.getWidth())/2, (ofGetHeight()-eyeGrid.getHeight())/2);
     ofSetColor(ofColor::white);
     eyeGrid.draw(bDebugMode);
     lookAtPoint.draw();
+    ofPopMatrix();
     
     trackerFbo.draw(0, 0, 320, 240);
     
@@ -100,5 +103,3 @@ void ofApp::keyPressed(int key){
 void ofApp::mouseMoved(int x, int y){
     lookAtPoint.animateTo(ofVec2f(x, y));
 }
-
-
