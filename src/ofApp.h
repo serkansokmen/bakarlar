@@ -39,10 +39,12 @@ public:
     shared_ptr<eye::ImageSet>           eyeImageSet;
     
     ofxPanel                gui;
-    ofParameterGroup        params;
+    ofParameterGroup        gridParams, trackerParams;
+    
+    ofParameter<float>      minAreaRadius, maxAreaRadius, threshold;
+    ofParameter<int>        persistence, maxDistance;
     ofParameter<int>        cols;
     ofParameter<int>        rows;
-    ofParameter<float>      threshold;
     ofParameter<bool>       bTracking;
     ofParameter<bool>       bDebugMode;
     
