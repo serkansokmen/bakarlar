@@ -33,9 +33,8 @@ void EyeGrid::update(const ofPoint& lookAt){
 //--------------------------------------------------------------
 void EyeGrid::draw(const bool& debugMode){
     ofSetColor(ofColor::white);
-    bool bDebugMode = debugMode;
     for (auto eye : eyes) {
-        eye->draw(&bDebugMode);
+        eye->draw(debugMode);
     }
     
     eyesFbo.draw(0, 0, this->width, this->height);

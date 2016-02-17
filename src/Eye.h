@@ -11,11 +11,12 @@ class Eye
     float eyeRadius;
 	
 	ofVec2f pupilPos;
+    ofPath  debugCircle, debugPlus;
 	
 public:
     
     void setup(const ofVec2f& pos, float w, float h);
-	void draw(bool *debugMode);
+	void draw(const bool& debugMode);
 	
 	void lookAt(const ofVec2f& pos, float gridSize);
     void rest();

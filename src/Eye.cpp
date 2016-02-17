@@ -56,12 +56,12 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 	pupilImg.resize(pupilWidth, pupilHeight);
 }
 
-void Eye::draw(bool *debugMode){
+void Eye::draw(const bool& debugMode){
 	
     float cx = eyeRadius/2;
 	float cy = eyeRadius/2;
 	
-	if (*debugMode){
+	if (debugMode){
         
         ofPushStyle();
         ofNoFill();
