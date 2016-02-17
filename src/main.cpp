@@ -1,19 +1,25 @@
 #include "ofMain.h"
-#include "testApp.h"
-#include "ofAppGlutWindow.h"
+#include "ofApp.h"
 
-//========================================================================
-int main( ){
 
-    ofAppGlutWindow window;
-	ofSetupOpenGL(&window, 1440, 900, OF_FULLSCREEN);			// <-------- setup the GL context
+int main(){
     
-    // Set anti-aliasing
-    window.setGlutDisplayString("rgba double samples>=2 depth");
+    int windowWidth = 980;
+    int windowHeight = 720;
     
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp( new testApp());
-
+#ifdef TARGET_OPENGLES
+    ofGLESWindowSettings settings;
+    settings.width = windowWidth;
+    settings.height = windowHeight;
+    settings.setGLESVersion(2);
+    ofCreateWindow(settings);
+#else
+    ofGLWindowSettings settings;
+    settings.width = windowWidth;
+    settings.height = windowHeight;
+    settings.setGLVersion(4, 1);
+    settings.windowMode = OF_WINDOW;
+    ofCreateWindow(settings);
+#endif
+    ofRunApp(new ofApp());
 }

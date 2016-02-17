@@ -1,7 +1,6 @@
-Observers
-=========
+Bakarlar
+========
 
-OpenFrameworks based Art Installation Project
----------------------------------------------
+Some eyes tracking some blobs
 
-[More info and screenshots](http://serkansokmen.com/80183/310723/projects/observer)
+[more](http://serkansokmen.com/80183/310723/projects/observer)

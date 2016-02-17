@@ -1,7 +1,3 @@
-ofxOpenCv
-ofxOsc
-ofxXmlSettings
-ofxFlob
+ofxAnimatable
+ofxGui
 ofxKinect
-ofxTweener
-ofxUI

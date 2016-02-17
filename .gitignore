@@ -83,8 +83,12 @@ Desktop.ini
 # Miscellaneous
 .mailmap
 
-bin/data/GUI/guiSettingsKinect.xml
-bin/data/GUI/guiSettingsFlob.xml
-bin/data/GUI/guiSettingsOSC.xml
+# Ignore data folder
+bin/data/
+cloak/
 
-bin/data/GUI/guiSettings.xml
+*.xml
+*.eps
+*.psd
+
+bin/data/settings.xml
