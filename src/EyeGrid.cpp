@@ -81,7 +81,7 @@ void EyeGrid::setupEyes(int cols, int rows){
 
 //--------------------------------------------------------------
 void EyeGrid::rest() {
-    for (auto eye : eyes) {
+    for (auto & eye : eyes) {
         eye->rest();
     }
 }
