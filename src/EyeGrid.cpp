@@ -1,7 +1,16 @@
 #include "EyeGrid.h"
 
+
+using namespace eye;
+
+
 //--------------------------------------------------------------
-void EyeGrid::setup(const ofRectangle& rect, int c, int r){
+Grid::~Grid(){
+    eyes.clear();
+}
+
+//--------------------------------------------------------------
+void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<ImageSet> set){
     
     float edgeLength = MIN(rect.getWidth(), rect.getHeight());
     
@@ -14,16 +23,13 @@ void EyeGrid::setup(const ofRectangle& rect, int c, int r){
     float eyeHeight = this->height / this->rows;
     this->eyeRadius = MIN(eyeWidth, eyeHeight);
     
-    surfaceImg.load("surface1.png");
-    whiteImg.load("white1.png");
-    pupilImg.load("pupil1.png");
-    shadeImg.load("shade1.png");
+    this->imageSet = set;
     
-    setupEyes();
+    this->init();
 }
 
 //--------------------------------------------------------------
-void EyeGrid::update(const ofPoint& lookAt){
+void Grid::update(const ofPoint& lookAt){
     for (auto & eye : eyes) {
         eye->lookAt(lookAt, MAX(this->width, this->height) * this->eyeRadius);
         eye->update();
@@ -31,7 +37,35 @@ void EyeGrid::update(const ofPoint& lookAt){
 }
 
 //--------------------------------------------------------------
-void EyeGrid::draw(const bool& debugMode){
+void Grid::init(){
+    eyesFbo.allocate(this->width, this->height);
+    eyesFbo.begin();
+    ofClear(0,0,0,0);
+    ofSetColor(ofColor::white);
+    eyesFbo.end();
+    
+    eyes.clear();
+    for (int i = 0; i<(int)this->cols; i ++){
+        for (int j = 0; j<(int)this->rows; j++){
+            
+            shared_ptr<Eye> eye(new Eye);
+            // Set pixel data before eye setup
+            eye->surfaceImg.setFromPixels(this->imageSet->surface.getPixels());
+            eye->whiteImg.setFromPixels(this->imageSet->white.getPixels());
+            eye->pupilImg.setFromPixels(this->imageSet->pupil.getPixels());
+            eye->shadeImg.setFromPixels(this->imageSet->shade.getPixels());
+            eye->setup(ofVec2f(i*this->eyeRadius, j*this->eyeRadius),
+                       this->eyeRadius,
+                       this->eyeRadius);
+            eyes.push_back(eye);
+            
+            ofLog(OF_LOG_VERBOSE, "Eye column:" + ofToString(j) + ", row:" + ofToString(i));
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void Grid::draw(const bool& debugMode){
     
     eyesFbo.begin();
     ofClear(0, 0, 0, 0);
@@ -45,42 +79,7 @@ void EyeGrid::draw(const bool& debugMode){
 }
 
 //--------------------------------------------------------------
-void EyeGrid::setupEyes(){
-    eyesFbo.allocate(this->width, this->height);
-    eyesFbo.begin();
-    ofClear(0,0,0,0);
-    ofSetColor(ofColor::white);
-    eyesFbo.end();
-    
-    eyes.clear();
-    for (int i = 0; i<(int)this->cols; i ++){
-        for (int j = 0; j<(int)this->rows; j++){
-            
-            shared_ptr<Eye> eye(new Eye);
-            // Set pixel data before eye setup
-            eye->surfaceImg.setFromPixels(surfaceImg.getPixels());
-            eye->whiteImg.setFromPixels(whiteImg.getPixels());
-            eye->pupilImg.setFromPixels(pupilImg.getPixels());
-            eye->shadeImg.setFromPixels(shadeImg.getPixels());
-            eye->setup(ofVec2f(i*this->eyeRadius, j*this->eyeRadius),
-                       this->eyeRadius,
-                       this->eyeRadius);
-            eyes.push_back(eye);
-            
-            ofLog(OF_LOG_VERBOSE, "Eye column:" + ofToString(j) + ", row:" + ofToString(i));
-        }
-    }
-}
-
-//--------------------------------------------------------------
-void EyeGrid::setupEyes(int cols, int rows){
-    this->cols = cols;
-    this->rows = rows;
-    this->setupEyes();
-}
-
-//--------------------------------------------------------------
-void EyeGrid::rest() {
+void Grid::rest() {
     for (auto & eye : eyes) {
         eye->rest();
     }

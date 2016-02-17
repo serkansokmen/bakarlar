@@ -1,7 +1,7 @@
 #include "Eye.h"
 #include "ofMain.h"
 
-void Eye::setup(const ofVec2f &p, float w, float h)
+void eye::Eye::setup(const ofVec2f &p, float w, float h)
 {
     eyeWidth = w;
     eyeHeight = h;
@@ -56,10 +56,10 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 	pupilImg.resize(pupilWidth, pupilHeight);
 }
 
-void Eye::update(){
+void eye::Eye::update(){
 }
 
-void Eye::draw(const bool& debugMode){
+void eye::Eye::draw(const bool& debugMode){
 	
     float cx = eyeRadius/2;
 	float cy = eyeRadius/2;
@@ -95,14 +95,14 @@ void Eye::draw(const bool& debugMode){
 	}
 }
 
-void Eye::lookAt(const ofVec2f &p, float gridSize){
+void eye::Eye::lookAt(const ofVec2f &p, float gridSize){
     
     float perc = ofNormalize(eyeRadius * .25, 0, ofGetHeight());
 	ofVec2f v = centerPos.getInterpolated(p, perc);
     pupilPos.set(v.x, v.y);
 }
 
-void Eye::rest(){
+void eye::Eye::rest(){
     pupilPos.set(centerPos);
 }
 

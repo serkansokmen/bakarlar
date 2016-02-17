@@ -3,38 +3,42 @@
 #include "ofMain.h"
 #include "Eye.h"
 
-
-class EyeGrid {
+namespace eye {
     
-    void setupEyes();
-    
-    ofImage surfaceImg;
-    ofImage whiteImg;
-    ofImage pupilImg;
-    ofImage shadeImg;
-    ofFbo   eyesFbo;
-    
-    float width, height;
-    float eyeRadius;
-    int   cols, rows;
-    
-    vector<shared_ptr<Eye> >       eyes;
-    
-public:
-    inline ~EyeGrid(){
-        eyes.clear();
+    struct ImageSet {
+        ofImage surface;
+        ofImage white;
+        ofImage pupil;
+        ofImage shade;
     };
     
-    void setup(const ofRectangle& rect, int cols, int rows);
-    void setupEyes(int cols, int rows);
-    void update(const ofPoint &lookAt);
-    void draw(const bool& debugMode);
-    void rest();
-    
-    inline float getWidth(){
-        return this->width;
+    class Grid {
+        
+        void init();
+        
+        ofFbo   eyesFbo;
+        
+        float   width, height;
+        float   eyeRadius;
+        int     cols, rows;
+        
+        shared_ptr<ImageSet>    imageSet;
+        
+        vector<shared_ptr<Eye>> eyes;
+        
+    public:
+        ~Grid();
+        
+        void setup(const ofRectangle& rect, int cols, int rows, shared_ptr<ImageSet> set);
+        void update(const ofPoint &lookAt);
+        void draw(const bool& debugMode);
+        void rest();
+        
+        inline float getWidth(){
+            return this->width;
+        };
+        inline float getHeight(){
+            return this->height;
+        };
     };
-    inline float getHeight(){
-        return this->height;
-    };
-};
+}

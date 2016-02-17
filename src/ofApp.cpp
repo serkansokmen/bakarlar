@@ -3,6 +3,7 @@
 
 using namespace cv;
 using namespace ofxCv;
+using namespace eye;
 
 
 //--------------------------------------------------------------
@@ -41,13 +42,19 @@ void ofApp::setup(){
 
     bTracking = true;
     
-    gui.setup();
+    this->eyeImageSet = shared_ptr<ImageSet> (new ImageSet);
+    eyeImageSet->surface.load("surface1.png");
+    eyeImageSet->white.load("white1.png");
+    eyeImageSet->pupil.load("pupil1.png");
+    eyeImageSet->shade.load("shade1.png");
+    
     gui.setName("Settings");
-    gui.add(cols.set("Columns", 7, 1, 16));
-    gui.add(rows.set("Rows", 6, 1, 16));
-    gui.add(threshold.set("Threshold", 15, 0, 255));
-    gui.add(bTracking.set("Track", false));
-    gui.add(bDebugMode.set("Debug", true));
+    params.add(cols.set("Columns", 7, 1, 16));
+    params.add(rows.set("Rows", 6, 1, 16));
+    params.add(threshold.set("Threshold", 15, 0, 255));
+    params.add(bTracking.set("Track", false));
+    params.add(bDebugMode.set("Debug", true));
+    gui.setup(params);
     
     cols.addListener(this, &ofApp::setCols);
     rows.addListener(this, &ofApp::setRows);
@@ -120,6 +127,5 @@ void ofApp::mouseMoved(int x, int y){
 void ofApp::exit(){
     cols.removeListener(this, &ofApp::setCols);
     rows.removeListener(this, &ofApp::setRows);
-    
     gui.saveToFile("settings.xml");
 }

@@ -10,6 +10,7 @@
 #include "Glow.h"
 
 
+
 class ofApp : public ofBaseApp{
     
 public:
@@ -22,24 +23,26 @@ public:
     void keyPressed(int key);
     
     inline void setCols(int& c) {
-        eyeGrid.setup(ofGetWindowRect(), c, rows);
+        eyeGrid.setup(ofGetWindowRect(), c, this->rows, this->eyeImageSet);
     };
     inline void setRows(int& r) {
-        eyeGrid.setup(ofGetWindowRect(), cols, r);
+        eyeGrid.setup(ofGetWindowRect(), this->cols, r, this->eyeImageSet);
     };
     
-    ofVideoGrabber  grabber;
+    ofVideoGrabber                      grabber;
     ofxCv::ContourFinder                contourFinder;
     ofxCv::RectTrackerFollower<Glow>    tracker;
     ofxAnimatableOfPoint                lookAtPoint;
     ofFbo                               trackerFbo;
     
-    EyeGrid                 eyeGrid;
+    eye::Grid                           eyeGrid;
+    shared_ptr<eye::ImageSet>           eyeImageSet;
     
     ofxPanel                gui;
-    ofParameter<float>      threshold;
+    ofParameterGroup        params;
     ofParameter<int>        cols;
     ofParameter<int>        rows;
+    ofParameter<float>      threshold;
     ofParameter<bool>       bTracking;
     ofParameter<bool>       bDebugMode;
     
