@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "Eye.h"
 #include "EyeImageSet.h"
+#include "Constants.h"
 
 
 namespace eye {

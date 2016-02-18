@@ -7,11 +7,7 @@
 #include "ofxAssimpModelLoader.h"
 #include "EyeGrid.h"
 #include "Glow.h"
-
-
-#define GRABBER_WIDTH   640
-#define GRABBER_HEIGHT  480
-
+#include "Constants.h"
 
 
 class ofApp : public ofBaseApp{
@@ -34,11 +30,12 @@ public:
         eyeGrid.setup(this->gridRect, this->cols, r, this->eyeImageSet);
     };
     inline void fitGridRect(){
-        float w = ofGetWidth()*0.85;
-        float h = ofGetHeight()*0.85;
+        float w = ofGetWidth();
+        float h = ofGetHeight();
         float x = 0;
         float y = 0;
         gridRect.set(x, y, w, h);
+        eyeGrid.setup(this->gridRect, this->cols, this->rows, this->eyeImageSet);
     };
     
     ofVideoGrabber                      grabber;

@@ -34,9 +34,55 @@ void Grid::update(){
     }
 }
 
-void Grid::lookAt(const ofPoint &lookAt){
+//--------------------------------------------------------------
+void Grid::draw(const bool& debugMode){
+    
+    eyesFbo.begin();
+    ofClear(0, 0, 0, 0);
+    ofSetColor(ofColor::white);
     for (auto & eye : eyes) {
-        float perc = ofNormalize(eyeRadius * .25, 0, this->rect.getHeight()) * 0.85;
+        eye->draw(debugMode);
+    }
+    eyesFbo.end();
+    
+    eyesFbo.draw(this->rect);
+}
+
+#pragma mark
+
+//--------------------------------------------------------------
+void Grid::init(){
+    eyesFbo.allocate(this->rect.getWidth(), this->rect.getHeight());
+    eyesFbo.begin();
+    ofClear(0,0,0,0);
+    ofSetColor(ofColor::white);
+    eyesFbo.end();
+    
+    eyes.clear();
+    for (int i = 0; i<(int)this->cols; i ++){
+        
+        float colPerc = (float)i / (float)this->cols;
+        
+        for (int j = 0; j<(int)this->rows; j++){
+            
+            float rowPerc = (float)j / (float)this->rows;
+            float x = ofLerp(this->rect.getX(), this->rect.getWidth(), colPerc);
+            float y = ofLerp(this->rect.getY(), this->rect.getHeight(), rowPerc);
+            ofVec2f pos(x, y);
+            
+            shared_ptr<Eye> eye(new Eye(this->imageSet));
+            eye->setup(pos, this->eyeRadius, this->eyeRadius);
+            eyes.push_back(eye);
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void Grid::lookAt(const ofPoint &lookAt){
+    
+    for (auto & eye : eyes) {
+        
+        float perc = ofNormalize(eyeRadius * EYE_PUPIL_MULT, 0, this->rect.getHeight());
         ofVec2f v = eye->restPos.getInterpolated(lookAt, perc);
         eye->pupilPos.setDuration(ofRandom(0.8) + 0.2);
         int rand = (int)ofRandom(0, 300);
@@ -55,43 +101,6 @@ void Grid::lookAt(const ofPoint &lookAt){
         }
         eye->pupilPos.animateTo(v);
     }
-}
-
-//--------------------------------------------------------------
-void Grid::init(){
-    eyesFbo.allocate(this->rect.getWidth(), this->rect.getHeight());
-    eyesFbo.begin();
-    ofClear(0,0,0,0);
-    ofSetColor(ofColor::white);
-    eyesFbo.end();
-    
-    eyes.clear();
-    for (int i = 0; i<(int)this->cols; i ++){
-        for (int j = 0; j<(int)this->rows; j++){
-            
-            shared_ptr<Eye> eye(new Eye(this->imageSet));
-            eye->setup(ofVec2f(i*this->eyeRadius, j*this->eyeRadius),
-                       this->eyeRadius,
-                       this->eyeRadius);
-            eyes.push_back(eye);
-            
-            ofLog(OF_LOG_VERBOSE, "Eye column:" + ofToString(j) + ", row:" + ofToString(i));
-        }
-    }
-}
-
-//--------------------------------------------------------------
-void Grid::draw(const bool& debugMode){
-    
-    eyesFbo.begin();
-    ofClear(0, 0, 0, 0);
-    ofSetColor(ofColor::white);
-    for (auto & eye : eyes) {
-        eye->draw(debugMode);
-    }
-    eyesFbo.end();
-    
-    eyesFbo.draw(this->rect);
 }
 
 //--------------------------------------------------------------
