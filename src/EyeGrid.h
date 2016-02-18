@@ -30,8 +30,9 @@ namespace eye {
         ~Grid();
         
         void setup(const ofRectangle& rect, int cols, int rows, shared_ptr<ImageSet> set);
-        void update(const ofPoint &lookAt);
+        void update();
         void draw(const bool& debugMode);
+        void lookAt(const ofPoint &lookAt);
         void rest();
         
         inline float getWidth(){

@@ -7,9 +7,14 @@ void eye::Eye::setup(const ofVec2f &p, float w, float h)
     eyeHeight = h;
     
     centerPos.set(p.x, p.y);
-	pupilPos.set(centerPos);
 	
     eyeRadius = min(eyeWidth, eyeHeight);
+    
+    pupilPos.setDuration(.4);
+    pupilPos.setPosition(centerPos);
+    pupilPos.setRepeatType(PLAY_ONCE);
+    pupilPos.setCurve(EASE_OUT);
+    pupilPos.setRepeatTimes(0);
     
 //    int numPixels			= pupilImg.getWidth() * pupilImg.getHeight() * 4;
 //	ofPixels px             = pupilImg.getPixels();
@@ -57,6 +62,8 @@ void eye::Eye::setup(const ofVec2f &p, float w, float h)
 }
 
 void eye::Eye::update(){
+    float dt = 1.0f / 60.0f;
+    pupilPos.update(dt);
 }
 
 void eye::Eye::draw(const bool& debugMode){
@@ -73,12 +80,14 @@ void eye::Eye::draw(const bool& debugMode){
         
         ofPushMatrix();
         ofSetColor(255);
-        ofTranslate(eyeRadius*.5 + pupilPos);
+        ofTranslate(eyeRadius*.5 + pupilPos.getCurrentPosition());
         float length = eyeRadius * .1f;
         ofDrawLine(-length, 0, length, 0);
         ofDrawLine(0, length, 0, -length);
         ofPopMatrix();
         ofPopStyle();
+        
+        pupilPos.draw();
         
 	} else {
         
@@ -86,7 +95,7 @@ void eye::Eye::draw(const bool& debugMode){
         ofSetColor(255, 255);
 		whiteImg.draw(centerPos);
         ofSetRectMode(OF_RECTMODE_CENTER);
-		pupilImg.draw(eyeRadius*.5 + pupilPos);
+		pupilImg.draw(eyeRadius*.5 + pupilPos.getCurrentPosition());
         ofSetRectMode(OF_RECTMODE_CORNER);
 		surfaceImg.draw(centerPos);
 		shadeImg.draw(centerPos);
@@ -95,14 +104,13 @@ void eye::Eye::draw(const bool& debugMode){
 	}
 }
 
-void eye::Eye::lookAt(const ofVec2f &p, float gridSize){
-    
+void eye::Eye::lookAt(const ofVec2f &p){
     float perc = ofNormalize(eyeRadius * .25, 0, ofGetHeight());
 	ofVec2f v = centerPos.getInterpolated(p, perc);
-    pupilPos.set(v.x, v.y);
+    pupilPos.animateTo(v);
 }
 
 void eye::Eye::rest(){
-    pupilPos.set(centerPos);
+    pupilPos.animateTo(centerPos);
 }
 

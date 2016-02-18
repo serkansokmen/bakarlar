@@ -29,10 +29,16 @@ void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<ImageSet> set
 }
 
 //--------------------------------------------------------------
-void Grid::update(const ofPoint& lookAt){
+void Grid::update(){
     for (auto & eye : eyes) {
-        eye->lookAt(lookAt, MAX(this->width, this->height) * this->eyeRadius);
         eye->update();
+    }
+}
+
+//--------------------------------------------------------------
+void Grid::lookAt(const ofPoint &lookAt){
+    for (auto & eye : eyes) {
+        eye->lookAt(lookAt);
     }
 }
 
