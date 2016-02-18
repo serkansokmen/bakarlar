@@ -3,20 +3,23 @@
 #include "ofMain.h"
 #include "ofxAnimatableOfPoint.h"
 #include "EyeImageSet.h"
+#include "Constants.h"
 
 
 namespace eye {
     class Eye
     {
-      
-      float eyeWidth;
-      float eyeHeight;
-      float eyeRadius;
+     
+    private:
       
       ofImage surfaceImg;
       ofImage whiteImg;
       ofImage pupilImg;
       ofImage shadeImg;
+      
+      float eyeWidth;
+      float eyeHeight;
+      float eyeRadius;
       
     public:
       

@@ -14,6 +14,8 @@ void ofApp::setup(){
     ofBackground(0);
     ofSetFrameRate(60);
     ofSetWindowTitle("Bakarlar");
+    ofEnableSmoothing();
+    ofEnableAntiAliasing();
     
     this->eyeImageSet = shared_ptr<ImageSet> (new ImageSet);
     eyeImageSet->surface.load("surface1.png");
@@ -65,6 +67,9 @@ void ofApp::setupParams(){
 void ofApp::update(){
     
     if (bTracking) {
+        if (!grabber.isInitialized()) {
+            grabber.setup(GRABBER_WIDTH, GRABBER_HEIGHT);
+        }
         grabber.update();
         
         contourFinder.setMinAreaRadius(minAreaRadius);
@@ -101,6 +106,9 @@ void ofApp::update(){
         }
         trackerFbo.end();
     } else {
+        
+        grabber.close();
+        
         trackerFbo.begin();
         ofClear(0, 0, 0, 0);
         trackerFbo.end();
@@ -129,6 +137,14 @@ void ofApp::keyPressed(int key){
     }
     if (key == 'f') {
         ofToggleFullscreen();
+    }
+    if (key == '=') {
+        this->cols ++;
+        this->rows ++;
+    }
+    if (key == '-') {
+        this->cols --;
+        this->rows --;
     }
 }
 

@@ -1,7 +1,12 @@
 #include "Eye.h"
 #include "ofMain.h"
 
-void eye::Eye::setup(const ofVec2f &p, float w, float h)
+
+using namespace eye;
+
+
+//--------------------------------------------------------------
+void Eye::setup(const ofVec2f &p, float w, float h)
 {
     eyeWidth = w;
     eyeHeight = h;
@@ -13,6 +18,8 @@ void eye::Eye::setup(const ofVec2f &p, float w, float h)
     pupilPos.setPosition(restPos);
     pupilPos.setRepeatType(PLAY_ONCE);
     pupilPos.setRepeatTimes(0);
+    
+//    pupilMtx.translate(restPos);
     
 //    int numPixels			= pupilImg.getWidth() * pupilImg.getHeight() * 4;
 //	ofPixels px             = pupilImg.getPixels();
@@ -59,12 +66,14 @@ void eye::Eye::setup(const ofVec2f &p, float w, float h)
 	pupilImg.resize(pupilWidth*0.85, pupilHeight*0.85);
 }
 
-void eye::Eye::update(){
+//--------------------------------------------------------------
+void Eye::update(){
     float dt = 1.0f / 60.0f;
     pupilPos.update(dt);
 }
 
-void eye::Eye::draw(const bool& debugMode){
+//--------------------------------------------------------------
+void Eye::draw(const bool& debugMode){
 	
     float cx = eyeRadius/2;
 	float cy = eyeRadius/2;
@@ -72,14 +81,17 @@ void eye::Eye::draw(const bool& debugMode){
 	if (debugMode){
         
         ofPushStyle();
-        ofNoFill();
-        ofSetColor(100);
-        ofDrawCircle(restPos + eyeRadius*.5, eyeRadius * .4f);
-        
         ofPushMatrix();
-        ofSetColor(255);
-        ofTranslate(eyeRadius*.5 + pupilPos.getCurrentPosition());
+        ofTranslate(eyeRadius*0.5, eyeRadius*0.5);
+        ofSetColor(80);
+        ofNoFill();
+        ofDrawCircle(restPos, eyeRadius*EYE_PERIPHERY_MULT);
+        ofSetColor(150);
+        ofTranslate(pupilPos.getCurrentPosition());
+        ofDrawCircle(0, 0, eyeRadius*EYE_PUPIL_MULT);
+
         float length = eyeRadius * .1f;
+        ofSetColor(255);
         ofDrawLine(-length, 0, length, 0);
         ofDrawLine(0, length, 0, -length);
         ofPopMatrix();
@@ -91,11 +103,10 @@ void eye::Eye::draw(const bool& debugMode){
         ofSetColor(255, 255);
 		whiteImg.draw(restPos);
         ofSetRectMode(OF_RECTMODE_CENTER);
-		pupilImg.draw(eyeRadius*.5 + pupilPos.getCurrentPosition());
+		pupilImg.draw(pupilPos.getCurrentPosition() + eyeRadius*0.5);
         ofSetRectMode(OF_RECTMODE_CORNER);
 		surfaceImg.draw(restPos);
 		shadeImg.draw(restPos);
         ofPopStyle();
-        
 	}
 }
