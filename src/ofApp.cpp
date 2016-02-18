@@ -65,6 +65,9 @@ void ofApp::setupParams(){
 void ofApp::update(){
     
     if (bTracking) {
+        if (!grabber.isInitialized()) {
+            grabber.setup(GRABBER_WIDTH, GRABBER_HEIGHT);
+        }
         grabber.update();
         
         contourFinder.setMinAreaRadius(minAreaRadius);
@@ -101,6 +104,9 @@ void ofApp::update(){
         }
         trackerFbo.end();
     } else {
+        
+        grabber.close();
+        
         trackerFbo.begin();
         ofClear(0, 0, 0, 0);
         trackerFbo.end();
