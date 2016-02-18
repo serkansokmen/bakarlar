@@ -138,6 +138,14 @@ void ofApp::keyPressed(int key){
     if (key == 'f') {
         ofToggleFullscreen();
     }
+    if (key == '=') {
+        this->cols ++;
+        this->rows ++;
+    }
+    if (key == '-') {
+        this->cols --;
+        this->rows --;
+    }
 }
 
 //--------------------------------------------------------------
