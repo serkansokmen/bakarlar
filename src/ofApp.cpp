@@ -14,6 +14,8 @@ void ofApp::setup(){
     ofBackground(0);
     ofSetFrameRate(60);
     ofSetWindowTitle("Bakarlar");
+    ofEnableSmoothing();
+    ofEnableAntiAliasing();
     
     this->eyeImageSet = shared_ptr<ImageSet> (new ImageSet);
     eyeImageSet->surface.load("surface1.png");
