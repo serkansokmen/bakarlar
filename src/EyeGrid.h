@@ -11,11 +11,10 @@ namespace eye {
         
         void init();
         
-        ofFbo   eyesFbo;
-        
-        float   width, height;
-        float   eyeRadius;
-        int     cols, rows;
+        ofFbo           eyesFbo;
+        ofRectangle     rect;
+        float           eyeRadius;
+        int             cols, rows;
         
         shared_ptr<ImageSet>    imageSet;
         
@@ -30,11 +29,8 @@ namespace eye {
         void lookAt(const ofPoint &lookAt);
         void rest();
         
-        inline float getWidth(){
-            return this->width;
-        };
-        inline float getHeight(){
-            return this->height;
+        inline ofRectangle getRectangle(){
+            return this->rect;
         };
     };
 }
