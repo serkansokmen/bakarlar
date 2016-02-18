@@ -127,6 +127,9 @@ void ofApp::keyPressed(int key){
     if (key == 's') {
         bDrawGui = !bDrawGui;
     }
+    if (key == 'f') {
+        ofToggleFullscreen();
+    }
 }
 
 //--------------------------------------------------------------
