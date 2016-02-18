@@ -25,6 +25,7 @@ public:
     
     void mouseMoved(int x, int y);
     void keyPressed(int key);
+    void windowResized(int w, int h);
     
     inline void setCols(int& c) {
         eyeGrid.setup(this->eyeGridRect, c, this->rows, this->eyeImageSet);

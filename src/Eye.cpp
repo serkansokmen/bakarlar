@@ -6,14 +6,12 @@ void eye::Eye::setup(const ofVec2f &p, float w, float h)
     eyeWidth = w;
     eyeHeight = h;
     
-    centerPos.set(p.x, p.y);
+    restPos.set(p.x, p.y);
 	
     eyeRadius = min(eyeWidth, eyeHeight);
     
-    pupilPos.setDuration(.4);
-    pupilPos.setPosition(centerPos);
+    pupilPos.setPosition(restPos);
     pupilPos.setRepeatType(PLAY_ONCE);
-    pupilPos.setCurve(EASE_OUT);
     pupilPos.setRepeatTimes(0);
     
 //    int numPixels			= pupilImg.getWidth() * pupilImg.getHeight() * 4;
@@ -58,7 +56,7 @@ void eye::Eye::setup(const ofVec2f &p, float w, float h)
     surfaceImg.resize(eyeRadius, eyeRadius);
     whiteImg.resize(eyeRadius, eyeRadius);
 	shadeImg.resize(eyeRadius, eyeRadius);
-	pupilImg.resize(pupilWidth, pupilHeight);
+	pupilImg.resize(pupilWidth*0.85, pupilHeight*0.85);
 }
 
 void eye::Eye::update(){
@@ -76,7 +74,7 @@ void eye::Eye::draw(const bool& debugMode){
         ofPushStyle();
         ofNoFill();
         ofSetColor(100);
-        ofDrawCircle(centerPos + eyeRadius*.5, eyeRadius * .4f);
+        ofDrawCircle(restPos + eyeRadius*.5, eyeRadius * .4f);
         
         ofPushMatrix();
         ofSetColor(255);
@@ -87,30 +85,17 @@ void eye::Eye::draw(const bool& debugMode){
         ofPopMatrix();
         ofPopStyle();
         
-        pupilPos.draw();
-        
 	} else {
         
         ofPushStyle();
         ofSetColor(255, 255);
-		whiteImg.draw(centerPos);
+		whiteImg.draw(restPos);
         ofSetRectMode(OF_RECTMODE_CENTER);
 		pupilImg.draw(eyeRadius*.5 + pupilPos.getCurrentPosition());
         ofSetRectMode(OF_RECTMODE_CORNER);
-		surfaceImg.draw(centerPos);
-		shadeImg.draw(centerPos);
+		surfaceImg.draw(restPos);
+		shadeImg.draw(restPos);
         ofPopStyle();
         
 	}
 }
-
-void eye::Eye::lookAt(const ofVec2f &p){
-    float perc = ofNormalize(eyeRadius * .25, 0, ofGetHeight());
-	ofVec2f v = centerPos.getInterpolated(p, perc);
-    pupilPos.animateTo(v);
-}
-
-void eye::Eye::rest(){
-    pupilPos.animateTo(centerPos);
-}
-

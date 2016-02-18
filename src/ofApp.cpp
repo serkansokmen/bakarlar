@@ -127,6 +127,9 @@ void ofApp::keyPressed(int key){
     if (key == 's') {
         bDrawGui = !bDrawGui;
     }
+    if (key == 'f') {
+        ofToggleFullscreen();
+    }
 }
 
 //--------------------------------------------------------------
@@ -136,6 +139,11 @@ void ofApp::mouseMoved(int x, int y){
                     ofMap(y, 0, ofGetHeight(), 0, eyeGrid.getHeight()));
         eyeGrid.lookAt(ofVec2f(x, y));
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    eyeGridRect.set(ofGetWindowRect());
 }
 
 //--------------------------------------------------------------
