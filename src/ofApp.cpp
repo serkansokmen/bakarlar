@@ -15,30 +15,20 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetWindowTitle("Bakarlar");
     
-    float camW = 640;
-    float camH = 480;
-    
     this->eyeImageSet = shared_ptr<ImageSet> (new ImageSet);
     eyeImageSet->surface.load("surface1.png");
     eyeImageSet->white.load("white1.png");
     eyeImageSet->pupil.load("pupil1.png");
     eyeImageSet->shade.load("shade1.png");
+    eyeGridRect.set(ofGetWindowRect());
     
-    grabber.setup(camW, camH);
+    grabber.setup(GRABBER_WIDTH, GRABBER_HEIGHT);
     setupParams();
     
-    trackerFbo.allocate(camW, camH);
+    trackerFbo.allocate(GRABBER_WIDTH, GRABBER_HEIGHT);
     trackerFbo.begin();
     ofClear(0, 0, 0, 0);
     trackerFbo.end();
-    
-    lookAtPoint.setDuration(.4);
-    lookAtPoint.setPosition(ofPoint::zero());
-    lookAtPoint.setRepeatType(PLAY_ONCE);
-    lookAtPoint.setCurve(EASE_OUT);
-    lookAtPoint.setRepeatTimes(0);
-
-    bTracking = true;
 }
 
 //--------------------------------------------------------------
@@ -86,6 +76,18 @@ void ofApp::update(){
         if (grabber.isFrameNew()) {
             contourFinder.findContours(grabber);
             tracker.track(contourFinder.getBoundingRects());
+            int contourCount = contourFinder.getBoundingRects().size();
+            if (contourCount > 0) {
+                ofPoint average(ofPoint::zero());
+                for (auto & rect : contourFinder.getBoundingRects()) {
+                    average.x += ofMap(rect.x, 0, GRABBER_WIDTH, 0, eyeGrid.getWidth());
+                    average.y += ofMap(rect.y, 0, GRABBER_HEIGHT, 0, eyeGrid.getHeight());
+                }
+                average /= contourCount;
+                eyeGrid.lookAt(average);
+            } else {
+                eyeGrid.rest();
+            }
         }
         
         trackerFbo.begin();
@@ -104,10 +106,7 @@ void ofApp::update(){
         trackerFbo.end();
     }
     
-    float dt = 1.0f / 60.0f;
-    lookAtPoint.update(dt);
-    
-    eyeGrid.update(lookAtPoint.getCurrentPosition());
+    eyeGrid.update();
 }
 
 //--------------------------------------------------------------
@@ -116,10 +115,7 @@ void ofApp::draw(){
     ofSetColor(ofColor::white);
     eyeGrid.draw(bDebugMode);
     
-    lookAtPoint.draw();
-    
-    trackerFbo.draw(0, 0, 320, 240);
-    trackerFbo.draw(0, 0, trackerFbo.getWidth()/2, trackerFbo.getHeight()/2);
+    trackerFbo.draw(0, 0, GRABBER_WIDTH/2, GRABBER_HEIGHT/2);
     
     if (bDrawGui) {
         gui.draw();
@@ -135,7 +131,11 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    lookAtPoint.animateTo(ofVec2f(x, y));
+    if (!bTracking) {
+        ofVec2f pos(ofMap(x, 0, ofGetWidth(), 0, eyeGrid.getWidth()),
+                    ofMap(y, 0, ofGetHeight(), 0, eyeGrid.getHeight()));
+        eyeGrid.lookAt(ofVec2f(x, y));
+    }
 }
 
 //--------------------------------------------------------------

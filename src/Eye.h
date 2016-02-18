@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxAnimatableOfPoint.h"
 
 
 namespace eye {
@@ -11,8 +12,8 @@ namespace eye {
       float eyeHeight;
       float eyeRadius;
       
-      ofVec2f pupilPos;
       ofPath  debugCircle, debugPlus;
+      ofxAnimatableOfPoint pupilPos;
       
     public:
       
@@ -20,7 +21,7 @@ namespace eye {
       void update();
       void draw(const bool& debugMode);
       
-      void lookAt(const ofVec2f& pos, float gridSize);
+      void lookAt(const ofVec2f& pos);
       void rest();
       
       ofVec2f centerPos;
