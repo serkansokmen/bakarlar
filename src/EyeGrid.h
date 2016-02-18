@@ -2,15 +2,10 @@
 
 #include "ofMain.h"
 #include "Eye.h"
+#include "EyeImageSet.h"
+
 
 namespace eye {
-    
-    struct ImageSet {
-        ofImage surface;
-        ofImage white;
-        ofImage pupil;
-        ofImage shade;
-    };
     
     class Grid {
         

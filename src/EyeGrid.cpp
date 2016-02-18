@@ -35,10 +35,26 @@ void Grid::update(){
     }
 }
 
-//--------------------------------------------------------------
 void Grid::lookAt(const ofPoint &lookAt){
     for (auto & eye : eyes) {
-        eye->lookAt(lookAt);
+        float perc = ofNormalize(eyeRadius * .25, 0, this->height) * 0.85;
+        ofVec2f v = eye->restPos.getInterpolated(lookAt, perc);
+        eye->pupilPos.setDuration(ofRandom(0.8) + 0.2);
+        int rand = (int)ofRandom(0, 300);
+        switch (rand) {
+            case 0:
+                eye->pupilPos.setCurve(EASE_OUT);
+                break;
+            case 1:
+                eye->pupilPos.setCurve(LATE_EASE_IN_EASE_OUT);
+                break;
+            case 2:
+                eye->pupilPos.setCurve(VERY_LATE_LINEAR);
+                break;
+            default:
+                break;
+        }
+        eye->pupilPos.animateTo(v);
     }
 }
 
@@ -54,12 +70,7 @@ void Grid::init(){
     for (int i = 0; i<(int)this->cols; i ++){
         for (int j = 0; j<(int)this->rows; j++){
             
-            shared_ptr<Eye> eye(new Eye);
-            // Set pixel data before eye setup
-            eye->surfaceImg.setFromPixels(this->imageSet->surface.getPixels());
-            eye->whiteImg.setFromPixels(this->imageSet->white.getPixels());
-            eye->pupilImg.setFromPixels(this->imageSet->pupil.getPixels());
-            eye->shadeImg.setFromPixels(this->imageSet->shade.getPixels());
+            shared_ptr<Eye> eye(new Eye(this->imageSet));
             eye->setup(ofVec2f(i*this->eyeRadius, j*this->eyeRadius),
                        this->eyeRadius,
                        this->eyeRadius);
@@ -87,7 +98,7 @@ void Grid::draw(const bool& debugMode){
 //--------------------------------------------------------------
 void Grid::rest() {
     for (auto & eye : eyes) {
-        eye->rest();
+        eye->pupilPos.animateTo(eye->restPos);
     }
 }
 

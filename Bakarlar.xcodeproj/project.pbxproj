@@ -161,6 +161,7 @@
 		E63D2B551C73F8A6007DED53 /* EyeGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EyeGrid.h; sourceTree = "<group>"; };
 		E63D2B591C74052C007DED53 /* Glow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Glow.cpp; sourceTree = "<group>"; };
 		E63D2B5A1C74052C007DED53 /* Glow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glow.h; sourceTree = "<group>"; };
+		E63D2B601C75704D007DED53 /* EyeImageSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EyeImageSet.h; sourceTree = "<group>"; };
 		E69C0CD31C6BAD0F00817555 /* Expression.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Expression.cpp; sourceTree = "<group>"; };
 		E69C0CD41C6BAD0F00817555 /* Expression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
 		E69C0CD51C6BAD0F00817555 /* ExpressionClassifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExpressionClassifier.cpp; sourceTree = "<group>"; };
@@ -465,6 +466,7 @@
 				E63D2B521C73F83C007DED53 /* Eye.h */,
 				E63D2B591C74052C007DED53 /* Glow.cpp */,
 				E63D2B5A1C74052C007DED53 /* Glow.h */,
+				E63D2B601C75704D007DED53 /* EyeImageSet.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
