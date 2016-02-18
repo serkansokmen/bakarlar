@@ -20,8 +20,8 @@ void ofApp::setup(){
     eyeImageSet->white.load("white1.png");
     eyeImageSet->pupil.load("pupil1.png");
     eyeImageSet->shade.load("shade1.png");
-    eyeGridRect.set(ofGetWindowRect());
     
+    fitGridRect();
     grabber.setup(GRABBER_WIDTH, GRABBER_HEIGHT);
     setupParams();
     
@@ -80,8 +80,8 @@ void ofApp::update(){
             if (contourCount > 0) {
                 ofPoint average(ofPoint::zero());
                 for (auto & rect : contourFinder.getBoundingRects()) {
-                    average.x += ofMap(rect.x, 0, GRABBER_WIDTH, 0, eyeGrid.getWidth());
-                    average.y += ofMap(rect.y, 0, GRABBER_HEIGHT, 0, eyeGrid.getHeight());
+                    average.x += ofMap(rect.x, 0, GRABBER_WIDTH, gridRect.getX(), gridRect.getWidth());
+                    average.y += ofMap(rect.y, 0, GRABBER_HEIGHT, gridRect.getY(), gridRect.getHeight());
                 }
                 average /= contourCount;
                 eyeGrid.lookAt(average);
@@ -135,15 +135,15 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
     if (!bTracking) {
-        ofVec2f pos(ofMap(x, 0, ofGetWidth(), 0, eyeGrid.getWidth()),
-                    ofMap(y, 0, ofGetHeight(), 0, eyeGrid.getHeight()));
+//        ofVec2f pos(ofMap(x, 0, ofGetWidth(), gridRect.getX(), gridRect.getWidth()),
+//                    ofMap(y, 0, ofGetHeight(), gridRect.getY(), gridRect.getHeight()));
         eyeGrid.lookAt(ofVec2f(x, y));
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    eyeGridRect.set(ofGetWindowRect());
+    fitGridRect();
 }
 
 //--------------------------------------------------------------

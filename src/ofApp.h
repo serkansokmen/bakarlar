@@ -28,10 +28,17 @@ public:
     void windowResized(int w, int h);
     
     inline void setCols(int& c) {
-        eyeGrid.setup(this->eyeGridRect, c, this->rows, this->eyeImageSet);
+        eyeGrid.setup(this->gridRect, c, this->rows, this->eyeImageSet);
     };
     inline void setRows(int& r) {
-        eyeGrid.setup(this->eyeGridRect, this->cols, r, this->eyeImageSet);
+        eyeGrid.setup(this->gridRect, this->cols, r, this->eyeImageSet);
+    };
+    inline void fitGridRect(){
+        float w = ofGetWidth()*0.85;
+        float h = ofGetHeight()*0.85;
+        float x = 0;
+        float y = 0;
+        gridRect.set(x, y, w, h);
     };
     
     ofVideoGrabber                      grabber;
@@ -41,10 +48,10 @@ public:
     
     eye::Grid                           eyeGrid;
     shared_ptr<eye::ImageSet>           eyeImageSet;
-    ofRectangle                         eyeGridRect;
     
     ofxPanel                gui;
     ofParameterGroup        gridParams, trackerParams;
+    ofRectangle             gridRect;
     
     ofParameter<float>      minAreaRadius, maxAreaRadius, threshold;
     ofParameter<int>        persistence, maxDistance;
