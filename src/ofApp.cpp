@@ -139,6 +139,11 @@ void ofApp::mouseMoved(int x, int y){
 }
 
 //--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    eyeGridRect.set(ofGetWindowRect());
+}
+
+//--------------------------------------------------------------
 void ofApp::exit(){
     cols.removeListener(this, &ofApp::setCols);
     rows.removeListener(this, &ofApp::setRows);
