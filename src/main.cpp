@@ -5,7 +5,7 @@
 int main(){
     
     int windowWidth = 980;
-    int windowHeight = 840;
+    int windowHeight = 980;
     
 #ifdef TARGET_OPENGLES
     ofGLESWindowSettings settings;
