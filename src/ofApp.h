@@ -15,6 +15,7 @@ class ofApp : public ofBaseApp{
     
 public:
     void setup();
+    void setupParams();
     void update();
     void draw();
     void exit();
