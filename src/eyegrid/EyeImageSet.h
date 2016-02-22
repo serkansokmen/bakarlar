@@ -3,8 +3,8 @@
 #include "ofMain.h"
 
 
-namespace eye {
-    struct ImageSet {
+namespace eyegrid {
+    struct EyeImageSet {
         ofImage surface;
         ofImage white;
         ofImage pupil;

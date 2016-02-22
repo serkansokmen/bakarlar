@@ -1,16 +1,27 @@
-#include "EyeGrid.h"
+#include "Grid.h"
 
 
-using namespace eye;
+using namespace eyegrid;
 
 
 //--------------------------------------------------------------
+Grid::Grid(){
+    params.setName("Grid");
+    params.add(cols.set("Columns", 7, 1, 16));
+    params.add(rows.set("Rows", 6, 1, 16));
+    params.add(bDebugMode.set("Debug", true));
+}
+
+//--------------------------------------------------------------
 Grid::~Grid(){
+    cols.removeListener(this, &Grid::setCols);
+    rows.removeListener(this, &Grid::setRows);
+    
     eyes.clear();
 }
 
 //--------------------------------------------------------------
-void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<ImageSet> set){
+void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<EyeImageSet> set){
     
     float edgeLength = MIN(rect.getWidth(), rect.getHeight());
     
@@ -25,6 +36,9 @@ void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<ImageSet> set
     this->imageSet = set;
     
     this->init();
+    
+    cols.addListener(this, &Grid::setCols);
+    rows.addListener(this, &Grid::setRows);
 }
 
 //--------------------------------------------------------------
@@ -35,16 +49,17 @@ void Grid::update(){
 }
 
 //--------------------------------------------------------------
-void Grid::draw(const bool& debugMode){
+void Grid::draw(){
     
     eyesFbo.begin();
     ofClear(0, 0, 0, 0);
     ofSetColor(ofColor::white);
     for (auto & eye : eyes) {
-        eye->draw(debugMode);
+        eye->draw(this->bDebugMode);
     }
     eyesFbo.end();
     
+    ofSetColor(ofColor::white);
     eyesFbo.draw(this->rect);
 }
 

@@ -3,6 +3,7 @@
 
 using namespace cv;
 using namespace ofxCv;
+using namespace tracker;
 
 
 const float dyingTime = 1;

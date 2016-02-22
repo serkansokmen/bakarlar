@@ -6,7 +6,7 @@
 #include "Constants.h"
 
 
-namespace eye {
+namespace eyegrid {
     class Eye
     {
      
@@ -24,7 +24,7 @@ namespace eye {
     public:
       
       Eye(){};
-      Eye(shared_ptr<ImageSet> set){
+      Eye(shared_ptr<EyeImageSet> set){
           surfaceImg.setFromPixels(set->surface.getPixels());
           whiteImg.setFromPixels(set->white.getPixels());
           pupilImg.setFromPixels(set->pupil.getPixels());

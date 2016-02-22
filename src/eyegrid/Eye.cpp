@@ -2,7 +2,7 @@
 #include "ofMain.h"
 
 
-using namespace eye;
+using namespace eyegrid;
 
 
 //--------------------------------------------------------------
