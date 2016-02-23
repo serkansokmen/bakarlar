@@ -47,6 +47,8 @@ void ContourTracker::setup(){
     grayPreprocImage.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
     
     contourFinder.setFindHoles(true);
+    contourFinder.setSimplify(true);
+    
     trackingColorMode = ofxCv::TRACK_COLOR_HSV;
     trackerFbo.allocate(GRABBER_WIDTH, GRABBER_HEIGHT);
     trackerFbo.begin();
@@ -83,7 +85,7 @@ void ContourTracker::updateGrabber(){
         
         ofxCv::convertColor(grabber, src, CV_RGB2GRAY);
         src = ofxCv::toCv(grabber);
-        ofxCv::blur(src, blur);
+        ofxCv::GaussianBlur(src, blur);
         ofxCv::toOf(src, grayPreprocImage);
         grayPreprocImage.update();
         
