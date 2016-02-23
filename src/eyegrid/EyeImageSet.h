@@ -5,9 +5,9 @@
 
 namespace eyegrid {
     struct EyeImageSet {
-        ofImage surface;
-        ofImage white;
-        ofImage pupil;
-        ofImage shade;
+        shared_ptr<ofImage> surface;
+        shared_ptr<ofImage> white;
+        shared_ptr<ofImage> pupil;
+        shared_ptr<ofImage> shade;
     };
 }

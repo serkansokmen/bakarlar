@@ -8,6 +8,10 @@ using namespace eyegrid;
 //--------------------------------------------------------------
 void Eye::setup(const ofVec2f &p, float w, float h)
 {
+    fbo.begin();
+    ofClear(0, 0, 0, 0);
+    fbo.end();
+    
     eyeWidth = w;
     eyeHeight = h;
     
@@ -54,22 +58,17 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 //	}
 //    
 //	pupilImg.setFromPixels(tarPx, pupilImg.width, pupilImg.height, OF_IMAGE_COLOR_ALPHA);
-	
-    
-	float pupilWidth = eyeRadius * pupilImg.getWidth() / surfaceImg.getHeight();
-	float pupilHeight = eyeRadius * pupilImg.getWidth() / surfaceImg.getHeight();
-    
-    // resize images
-    surfaceImg.resize(eyeRadius, eyeRadius);
-    whiteImg.resize(eyeRadius, eyeRadius);
-	shadeImg.resize(eyeRadius, eyeRadius);
-	pupilImg.resize(pupilWidth*0.85, pupilHeight*0.85);
 }
 
 //--------------------------------------------------------------
 void Eye::update(){
     float dt = 1.0f / 60.0f;
     pupilPos.update(dt);
+//    if (loaded) {
+//        pupilImg->setUseTexture(true);
+//        pupilImg->update();
+//        loaded = false;
+//    }
 }
 
 //--------------------------------------------------------------
@@ -88,7 +87,7 @@ void Eye::draw(const bool& debugMode){
         ofDrawCircle(restPos, eyeRadius*EYE_PERIPHERY_MULT);
         ofSetColor(150);
         ofTranslate(pupilPos.getCurrentPosition());
-        ofDrawCircle(0, 0, eyeRadius*EYE_PUPIL_MULT);
+        ofDrawCircle(0, 0, eyeRadius*EYE_PUPIL_SCL_MULT);
 
         float length = eyeRadius * .1f;
         ofSetColor(255);
@@ -99,14 +98,19 @@ void Eye::draw(const bool& debugMode){
         
 	} else {
         
-        ofPushStyle();
+        fbo.begin();
         ofSetColor(255, 255);
-		whiteImg.draw(restPos);
+        if (whiteImg->isAllocated())
+            whiteImg->draw(restPos, eyeWidth, eyeHeight);
         ofSetRectMode(OF_RECTMODE_CENTER);
-		pupilImg.draw(pupilPos.getCurrentPosition() + eyeRadius*0.5);
+        if (pupilImg->isAllocated())
+            pupilImg->draw(pupilPos.getCurrentPosition() + eyeRadius*0.5, eyeRadius*EYE_PUPIL_SCL_MULT, eyeRadius*EYE_PUPIL_SCL_MULT);
         ofSetRectMode(OF_RECTMODE_CORNER);
-		surfaceImg.draw(restPos);
-		shadeImg.draw(restPos);
-        ofPopStyle();
+        if (surfaceImg->isAllocated())
+            surfaceImg->draw(restPos, eyeWidth, eyeHeight);
+        if (shadeImg->isAllocated())
+            shadeImg->draw(restPos, eyeWidth, eyeHeight);
+        fbo.end();
+        fbo.draw(restPos, eyeWidth, eyeHeight);
 	}
 }

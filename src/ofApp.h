@@ -23,7 +23,6 @@ public:
     
     tracker::ContourTracker             tracker;
     eyegrid::Grid                       eyeGrid;
-    shared_ptr<eyegrid::EyeImageSet>    eyeImageSet;
     
     ofxPanel                gui;
     ofRectangle             gridRect;

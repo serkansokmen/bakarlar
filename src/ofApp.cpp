@@ -18,14 +18,8 @@ void ofApp::setup(){
     
     setupParams();
     
-    this->eyeImageSet = shared_ptr<EyeImageSet> (new EyeImageSet);
-    eyeImageSet->surface.load("surface1.png");
-    eyeImageSet->white.load("white1.png");
-    eyeImageSet->pupil.load("pupil1.png");
-    eyeImageSet->shade.load("shade1.png");
-    
     gridRect.set(0, 0, ofGetWidth(), ofGetHeight());
-    eyeGrid.setup(gridRect, 4, 4, this->eyeImageSet);
+    eyeGrid.setup(gridRect, 4, 4);
     tracker.setup();
 }
 

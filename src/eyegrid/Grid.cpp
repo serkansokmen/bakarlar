@@ -10,6 +10,16 @@ Grid::Grid(){
     params.add(cols.set("Columns", 7, 1, 16));
     params.add(rows.set("Rows", 6, 1, 16));
     params.add(bDebugMode.set("Debug", true));
+    
+    imageSet = shared_ptr<EyeImageSet> (new EyeImageSet);
+    imageSet->surface = shared_ptr<ofImage> (new ofImage);
+    imageSet->white = shared_ptr<ofImage> (new ofImage);
+    imageSet->pupil = shared_ptr<ofImage> (new ofImage);
+    imageSet->shade = shared_ptr<ofImage> (new ofImage);
+    imageSet->surface->load("surface1.png");
+    imageSet->white->load("white1.png");
+    imageSet->pupil->load("pupil1.png");
+    imageSet->shade->load("shade1.png");
 }
 
 //--------------------------------------------------------------
@@ -21,7 +31,7 @@ Grid::~Grid(){
 }
 
 //--------------------------------------------------------------
-void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<EyeImageSet> set){
+void Grid::setup(const ofRectangle& rect, int c, int r){
     
     float edgeLength = MIN(rect.getWidth(), rect.getHeight());
     
@@ -33,12 +43,17 @@ void Grid::setup(const ofRectangle& rect, int c, int r, shared_ptr<EyeImageSet> 
     float eyeHeight = rect.getHeight() / this->rows;
     this->eyeRadius = MIN(eyeWidth, eyeHeight);
     
-    this->imageSet = set;
+    eyesFbo.allocate(this->rect.getWidth(), this->rect.getHeight());
+    eyesFbo.begin();
+    ofClear(0,0,0,0);
+    ofSetColor(ofColor::white);
+    eyesFbo.end();
     
-    this->init();
+    this->initEyes();
     
     cols.addListener(this, &Grid::setCols);
     rows.addListener(this, &Grid::setRows);
+    ofLog(OF_LOG_WARNING, "Setup Called");
 }
 
 //--------------------------------------------------------------
@@ -66,12 +81,16 @@ void Grid::draw(){
 #pragma mark
 
 //--------------------------------------------------------------
-void Grid::init(){
-    eyesFbo.allocate(this->rect.getWidth(), this->rect.getHeight());
-    eyesFbo.begin();
-    ofClear(0,0,0,0);
-    ofSetColor(ofColor::white);
-    eyesFbo.end();
+void Grid::initEyes(){
+    
+    //    float pupilWidth = eyeRadius * imageSet->pupil->getWidth() / imageSet->surface->getHeight();
+    //    float pupilHeight = eyeRadius * imageSet->pupil->getWidth() / imageSet->surface->getHeight();
+    //
+    //    // resize images
+    //    imageSet->surface->resize(eyeRadius, eyeRadius);
+    //    imageSet->white->resize(eyeRadius, eyeRadius);
+    //    imageSet->shade->resize(eyeRadius, eyeRadius);
+    //    imageSet->pupil->resize(pupilWidth*0.85, pupilHeight*0.85);
     
     eyes.clear();
     for (int i = 0; i<(int)this->cols; i ++){
@@ -83,10 +102,14 @@ void Grid::init(){
             float rowPerc = (float)j / (float)this->rows;
             float x = ofLerp(this->rect.getX(), this->rect.getWidth(), colPerc);
             float y = ofLerp(this->rect.getY(), this->rect.getHeight(), rowPerc);
-            ofVec2f pos(x, y);
+            int index = j + i * cols;
             
-            shared_ptr<Eye> eye(new Eye(this->imageSet));
-            eye->setup(pos, this->eyeRadius, this->eyeRadius);
+            shared_ptr<Eye> eye(new Eye());
+            eye->setup(ofVec2f(x, y), this->eyeRadius, this->eyeRadius);
+            eye->setImageLayer(imageSet->surface, "surface");
+            eye->setImageLayer(imageSet->white, "white");
+            eye->setImageLayer(imageSet->pupil, "pupil");
+            eye->setImageLayer(imageSet->shade, "shade");
             eyes.push_back(eye);
         }
     }
@@ -97,7 +120,7 @@ void Grid::lookAt(const ofPoint &lookAt){
     
     for (auto & eye : eyes) {
         
-        float perc = ofNormalize(eyeRadius * EYE_PUPIL_MULT, 0, this->rect.getHeight());
+        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, this->rect.getHeight());
         ofVec2f v = eye->restPos.getInterpolated(lookAt, perc);
         eye->pupilPos.setDuration(ofRandom(0.8) + 0.2);
         int rand = (int)ofRandom(0, 300);

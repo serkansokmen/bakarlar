@@ -11,7 +11,7 @@ namespace eyegrid {
     class Grid {
     
     private:
-        void init();
+        void initEyes();
         
         ofFbo           eyesFbo;
         ofRectangle     rect;
@@ -21,19 +21,20 @@ namespace eyegrid {
         vector<shared_ptr<Eye>> eyes;
         
         inline void setCols(int& c) {
-            this->setup(this->rect, c, this->rows, this->imageSet);
+            this->setup(this->rect, c, this->rows);
         };
         inline void setRows(int& r) {
-            this->setup(this->rect, this->cols, r, this->imageSet);
+            this->setup(this->rect, this->cols, r);
         };
         
         ofParameter<bool>   bDebugMode;
+        bool    isLoading;
         
     public:
         Grid();
         ~Grid();
         
-        void setup(const ofRectangle& rect, int cols, int rows, shared_ptr<EyeImageSet> set);
+        void setup(const ofRectangle& rect, int cols, int rows);
         void update();
         void draw();
         void lookAt(const ofPoint &lookAt);
@@ -44,7 +45,7 @@ namespace eyegrid {
         };
         
         inline void fitEyesToRect(const ofRectangle& borderRect){
-            this->setup(borderRect, this->cols, this->rows, this->imageSet);
+            this->setup(borderRect, this->cols, this->rows);
         };
         
         ofParameterGroup    params;
