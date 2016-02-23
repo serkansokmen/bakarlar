@@ -53,7 +53,6 @@ void Grid::setup(const ofRectangle& rect, int c, int r){
     
     cols.addListener(this, &Grid::setCols);
     rows.addListener(this, &Grid::setRows);
-    ofLog(OF_LOG_WARNING, "Setup Called");
 }
 
 //--------------------------------------------------------------
