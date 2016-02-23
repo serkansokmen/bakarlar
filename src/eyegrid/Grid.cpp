@@ -7,8 +7,8 @@ using namespace eyegrid;
 //--------------------------------------------------------------
 Grid::Grid(){
     params.setName("Grid");
-    params.add(cols.set("Columns", 7, 1, 16));
-    params.add(rows.set("Rows", 6, 1, 16));
+    params.add(cols.set("Columns", 7, 1, 50));
+    params.add(rows.set("Rows", 6, 1, 50));
     params.add(bDebugMode.set("Debug", true));
     
     imageSet = shared_ptr<EyeImageSet> (new EyeImageSet);
