@@ -83,15 +83,6 @@ void Grid::draw(){
 //--------------------------------------------------------------
 void Grid::initEyes(){
     
-    //    float pupilWidth = eyeRadius * imageSet->pupil->getWidth() / imageSet->surface->getHeight();
-    //    float pupilHeight = eyeRadius * imageSet->pupil->getWidth() / imageSet->surface->getHeight();
-    //
-    //    // resize images
-    //    imageSet->surface->resize(eyeRadius, eyeRadius);
-    //    imageSet->white->resize(eyeRadius, eyeRadius);
-    //    imageSet->shade->resize(eyeRadius, eyeRadius);
-    //    imageSet->pupil->resize(pupilWidth*0.85, pupilHeight*0.85);
-    
     eyes.clear();
     for (int i = 0; i<(int)this->cols; i ++){
         
