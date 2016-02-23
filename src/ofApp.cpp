@@ -13,8 +13,8 @@ void ofApp::setup(){
     ofBackground(0);
     ofSetFrameRate(60);
     ofSetWindowTitle("Bakarlar");
-    ofEnableSmoothing();
-    ofEnableAntiAliasing();
+//    ofEnableSmoothing();
+//    ofEnableAntiAliasing();
     
     setupParams();
     
@@ -59,7 +59,7 @@ void ofApp::update(){
 void ofApp::draw(){
     
     eyeGrid.draw();
-    tracker.draw(20, 20, 0.5f);
+    tracker.draw(ofGetWidth() - (GRABBER_WIDTH + 20), 20, 1.0f);
     
     if (bDrawGui) {
         gui.draw();
@@ -83,6 +83,13 @@ void ofApp::keyPressed(int key){
     if (key == '-') {
         eyeGrid.cols --;
         eyeGrid.rows --;
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button){
+    if (tracker.isTracking()) {
+        tracker.targetColor = tracker.getColorAt(x, y);
     }
 }
 

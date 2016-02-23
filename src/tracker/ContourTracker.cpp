@@ -1,8 +1,6 @@
 #include "ContourTracker.h"
 
 
-using namespace cv;
-using namespace ofxCv;
 using namespace tracker;
 
 
@@ -16,16 +14,20 @@ ContourTracker::ContourTracker(){
     params.add(nearThreshold.set("Near Threshold", 230, 0, 255));
     params.add(farThreshold.set("Far Threshold", 70, 0, 255));
     params.add(threshold.set("Threshold", 50, 0, 255));
+    params.add(targetColor.set("Track Color", ofColor::white, ofColor::black, ofColor::white));
+    params.add(blur.set("Blur", 4, 0, 20));
     params.add(persistence.set("Persistance", 15, 1, 50));
     params.add(maxDistance.set("Max Distance", 50, 1, 200));
     params.add(bDraw.set("Draw Contour Tracker", true));
     
+    targetColor.addListener(this, &ContourTracker::setTrackingColor);
     bUseGrabber.addListener(this, &ContourTracker::toggleGrabber);
     bUseKinect.addListener(this, &ContourTracker::toggleKinect);
 }
 
 //--------------------------------------------------------------
 ContourTracker::~ContourTracker(){
+    targetColor.removeListener(this, &ContourTracker::setTrackingColor);
     bUseGrabber.removeListener(this, &ContourTracker::toggleGrabber);
     bUseKinect.removeListener(this, &ContourTracker::toggleKinect);
     kinect.close();
@@ -44,7 +46,8 @@ void ContourTracker::setup(){
     grayThreshFar.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
     grayPreprocImage.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
     
-    contourFinder.setFindHoles(false);
+    contourFinder.setFindHoles(true);
+    trackingColorMode = ofxCv::TRACK_COLOR_HSV;
     trackerFbo.allocate(GRABBER_WIDTH, GRABBER_HEIGHT);
     trackerFbo.begin();
     ofClear(0, 0, 0, 0);
@@ -78,8 +81,13 @@ void ContourTracker::updateGrabber(){
         tracker.setPersistence(persistence);
         tracker.setMaximumDistance(maxDistance);
         
-//        imitate(grayImage, grabber, CV_8UC1);
-        contourFinder.findContours(grabber);
+        ofxCv::convertColor(grabber, src, CV_RGB2GRAY);
+        src = ofxCv::toCv(grabber);
+        ofxCv::blur(src, blur);
+        ofxCv::toOf(src, grayPreprocImage);
+        grayPreprocImage.update();
+        
+        contourFinder.findContours(grayPreprocImage);
         tracker.track(contourFinder.getBoundingRects());
     }
 }
@@ -92,17 +100,17 @@ void ContourTracker::updateKinect(){
     // there is a new frame and we are connected
     if (kinect.isFrameNew()) {
         
-        convertColor(kinect, grayImage, CV_RGB2GRAY);
-        imitate(grayThreshNear, grayImage);
-        imitate(grayThreshFar, grayImage);
+        ofxCv::convertColor(kinect, grayImage, CV_RGB2GRAY);
+        ofxCv::imitate(grayThreshNear, grayImage);
+        ofxCv::imitate(grayThreshFar, grayImage);
         
         //            threshold(grayImage, grayThreshNear, &nearThreshold.get());
         //            threshold(grayImage, grayThreshFar, &farThreshold.get());
         
         // Convert to CV to perform AND operation
-        Mat grayThreshNearMat = toCv(grayThreshNear);
-        Mat grayThreshFarMat = toCv(grayThreshFar);
-        Mat grayImageMat = toCv(grayImage);
+        Mat grayThreshNearMat = ofxCv::toCv(grayThreshNear);
+        Mat grayThreshFarMat = ofxCv::toCv(grayThreshFar);
+        Mat grayImageMat = ofxCv::toCv(grayImage);
         
         // cvAnd to get the pixels which are a union of the two thresholds
         bitwise_and(grayThreshNearMat, grayThreshFarMat, grayImageMat);
@@ -111,8 +119,8 @@ void ContourTracker::updateKinect(){
         grayPreprocImage = grayImage;
         
         // Process image
-        dilate(grayImage);
-        dilate(grayImage);
+        ofxCv::dilate(grayImage);
+        ofxCv::dilate(grayImage);
         //erode(grayImage);
         
         // Mark image as changed
@@ -134,7 +142,7 @@ void ContourTracker::draw(float x, float y, float scale){
         if (bUseGrabber || bUseKinect) {
             ofSetColor(ofColor::white);
             if (bUseGrabber) {
-                grabber.draw(0, 0);
+                grayPreprocImage.draw(0, 0);
             }
             if (bUseKinect) {
                 kinect.drawDepth(0, 0, GRABBER_WIDTH, GRABBER_HEIGHT);

@@ -25,6 +25,8 @@ namespace tracker {
         ofImage grayThreshNear;
         ofImage grayThreshFar;
         ofImage grayPreprocImage;
+        cv::Mat src;
+        ofxCv::TrackingColorMode    trackingColorMode;
         
         void toggleGrabber(bool& yes);
         void toggleKinect(bool& yes);
@@ -32,9 +34,10 @@ namespace tracker {
         void updateKinect();
         
     public:
+        ofParameter<ofColor>    targetColor;
         ofParameter<float>      minAreaRadius, maxAreaRadius, threshold;
         ofParameter<float>      nearThreshold, farThreshold;
-        ofParameter<int>        persistence, maxDistance;
+        ofParameter<int>        persistence, maxDistance, blur;
         ofParameter<bool>       bUseGrabber;
         ofParameter<bool>       bUseKinect;
         ofParameter<bool>       bDraw;
@@ -51,14 +54,20 @@ namespace tracker {
         void draw(float x, float y, float scale);
         void drawPointCloud();
         
-        inline const bool& isTracking(){
-            return (bUseGrabber || bUseKinect);
+        inline bool isTracking() {
+            return bUseGrabber == true || bUseKinect == true;
         }
         inline const vector<cv::Rect>& getBoundingRects() const {
             return contourFinder.getBoundingRects();
         }
         inline const ofPoint getAverage() const {
             
+        }
+        inline void setTrackingColor(ofColor& c) {
+            contourFinder.setTargetColor(c, trackingColorMode);
+        }
+        inline ofColor getColorAt(int x, int y) {
+            return ofColor(grabber.getPixels().getColor(x, y));
         }
     };
 };
