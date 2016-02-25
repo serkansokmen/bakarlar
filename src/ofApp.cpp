@@ -18,20 +18,23 @@ void ofApp::setup(){
     
     kinect.init();
     kinect.setRegistration(true);
-    
-    setupParams();
+    player.load("video.mov");
+    trackPixels = unique_ptr<ofPixels>(new ofPixels);
     
     gridRect.set(0, 0, ofGetWidth(), ofGetHeight());
     eyeGrid.setup(gridRect, 4, 4);
     
-    lookAt = unique_ptr<ofPoint>(new ofPoint);
-}
-
-//--------------------------------------------------------------
-void ofApp::setupParams(){
+    lookAt = unique_ptr<ofxAnimatableOfPoint>(new ofxAnimatableOfPoint);
+    lookAt->setPosition(ofPoint::zero());
+    lookAt->setRepeatType(PLAY_ONCE);
+    lookAt->setRepeatTimes(0);
+    lookAt->setCurve(EASE_IN_EASE_OUT);
+    
+    // Setup params
     gui.setName("Settings");
     ofParameterGroup params;
     params.add(bUseGrabber.set("Use Video Grabber", false));
+    params.add(bUsePlayer.set("Use Video Player", false));
     params.add(bUseKinect.set("Use Kinect", false));
     params.add(colorTracker.params);
     params.add(flowTracker.params);
@@ -39,6 +42,7 @@ void ofApp::setupParams(){
     gui.setup(params);
     
     bUseGrabber.addListener(this, &ofApp::toggleGrabber);
+    bUsePlayer.addListener(this, &ofApp::togglePlayer);
     bUseKinect.addListener(this, &ofApp::toggleKinect);
     
     gui.loadFromFile("settings.xml");
@@ -55,6 +59,13 @@ void ofApp::update(){
             flowTracker.track(grabber.getPixels());
         }
     }
+    if (bUsePlayer){
+        player.update();
+        if (player.isFrameNew()) {
+            colorTracker.track(player.getPixels());
+            flowTracker.track(player.getPixels());
+        }
+    }
     if (bUseKinect){
         kinect.update();
         // there is a new frame and we are connected
@@ -65,29 +76,45 @@ void ofApp::update(){
     }
     
     eyeGrid.update();
+    if (isTracking()) {
+        if (colorTracker.enabled){
+            int contourCount = colorTracker.getBoundingRects().size();
+            if (contourCount > 0 && isTracking()){
+                unique_ptr<ofPoint> p = unique_ptr<ofPoint>(new ofPoint(colorTracker.getAverage()));
+                
+                p->x = ofNormalize(colorTracker.getAverage().x, colorTracker.drawPos->x, GRABBER_WIDTH);
+                p->y = ofNormalize(colorTracker.getAverage().y, colorTracker.drawPos->y, GRABBER_HEIGHT);
+                ofLogWarning(ofToString(*p));
+                if (!lookAt->isAnimating())
+                    lookAt->animateTo(*p);
+            }
+        }
+    }
     
-//    int contourCount = colorTracker.getBoundingRects().size();
-//    if (contourCount > 0 && isTracking()){
-////        *lookAt = colorTracker.getAverage();
-//        lookAt->x = ofMap(lookAt->x, 0, GRABBER_WIDTH, 0, ofGetWidth());
-//        lookAt->y = ofMap(lookAt->y, 0, GRABBER_HEIGHT, 0, ofGetHeight());
-//        eyeGrid.lookAt(*lookAt);
-//    } else {
-//        if (isTracking()){
-//            eyeGrid.rest();
-//        }
-//    }
+    if (lookAt->isAnimating()){
+        eyeGrid.lookAt(ofVec2f(lookAt->getCurrentPosition().x, lookAt->getCurrentPosition().y));
+    } else {
+        eyeGrid.rest();
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::toggleGrabber(bool& yes) {
-    ofLog(OF_LOG_NOTICE, ofToString(yes));
     if (yes) {
         grabber.setup(GRABBER_WIDTH, GRABBER_HEIGHT);
     } else {
         if (grabber.isInitialized()) {
             grabber.close();
         }
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::togglePlayer(bool& yes) {
+    if (yes) {
+        player.play();
+    } else {
+        player.stop();
     }
 }
 
@@ -106,8 +133,13 @@ void ofApp::toggleKinect(bool& yes) {
 void ofApp::draw(){
     
     eyeGrid.draw();
+    
     colorTracker.draw();
     flowTracker.draw();
+    
+    ofSetColor(ofColor::red);
+    ofDrawCircle(lookAt->getCurrentPosition(), 20);
+    ofSetColor(ofColor::white);
     
     if (bDrawGui) {
         gui.draw();
@@ -132,21 +164,30 @@ void ofApp::keyPressed(int key){
         eyeGrid.cols --;
         eyeGrid.rows --;
     }
+    if (key == ' ') {
+        player.setPaused(player.isPlaying());
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     ofRectangle rect(colorTracker.drawPos.get(), GRABBER_WIDTH, GRABBER_HEIGHT);
     if (isTracking() && rect.inside(x, y)) {
-        ofColor color(grabber.getPixels().getColor(x - colorTracker.drawPos->x, y - colorTracker.drawPos->y));
-        colorTracker.targetColor = color;
+        if (bUseGrabber) {
+            *trackPixels = grabber.getPixels();
+        } else if (bUsePlayer) {
+            *trackPixels = player.getPixels();
+        } else if (bUseKinect) {
+            *trackPixels = kinect.getDepthPixels();
+        };
+        colorTracker.targetColor = trackPixels->getColor(x - colorTracker.drawPos->x, y - colorTracker.drawPos->y);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
     if (!isTracking()) {
-        eyeGrid.lookAt(ofVec2f(x, y));
+        lookAt->animateTo(ofVec2f(x, y));
     }
 }
 
@@ -162,8 +203,10 @@ void ofApp::windowResized(int w, int h){
 void ofApp::exit(){
     
     bUseGrabber.removeListener(this, &ofApp::toggleGrabber);
+    bUsePlayer.removeListener(this, &ofApp::togglePlayer);
     bUseKinect.removeListener(this, &ofApp::toggleKinect);
-    grabber.close();
+    
+    player.close();
     kinect.close();
     gui.saveToFile("settings.xml");
 }

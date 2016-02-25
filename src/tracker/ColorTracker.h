@@ -14,10 +14,6 @@ namespace tracker {
         ofxCv::ContourFinder contourFinder;
         
         ofImage colorImage;
-        ofImage grayImage;
-        ofImage grayThreshNear;
-        ofImage grayThreshFar;
-        ofImage grayPreprocImage;
         cv::Mat src;
         ofxCv::TrackingColorMode    trackingColorMode;
         

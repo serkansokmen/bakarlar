@@ -17,10 +17,7 @@ ColorTracker::ColorTracker(){
     
     targetColor.addListener(this, &ColorTracker::setTrackingColor);
     
-    grayImage.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
-    grayThreshNear.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
-    grayThreshFar.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
-    grayPreprocImage.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_GRAYSCALE);
+    colorImage.allocate(GRABBER_WIDTH, GRABBER_HEIGHT, OF_IMAGE_COLOR);
     
     contourFinder.setFindHoles(true);
     //    contourFinder.setSimplify(true);
@@ -36,15 +33,15 @@ ColorTracker::~ColorTracker(){
 void ColorTracker::track(const ofPixels& pixels){
     if (enabled) {
         colorImage.setFromPixels(pixels);
-        ofxCv::convertColor(colorImage, src, CV_RGB2GRAY);
+//        background.update(colorImage, src);
         src = ofxCv::toCv(colorImage);
         ofxCv::GaussianBlur(src, blur);
-        ofxCv::toOf(src, grayPreprocImage);
-        grayPreprocImage.update();
+        ofxCv::toOf(src, colorImage);
+        colorImage.update();
         
         contourFinder.setMinAreaNorm(minAreaNorm);
         contourFinder.setThreshold(threshold);
-        contourFinder.findContours(grayPreprocImage);
+        contourFinder.findContours(colorImage);
     }
 }
 
@@ -52,7 +49,7 @@ void ColorTracker::track(const ofPixels& pixels){
 void ColorTracker::draw(){
     if (enabled){
         BaseTracker::begin();
-        grayPreprocImage.draw(0, 0);
+        colorImage.draw(0, 0);
         contourFinder.draw();
         BaseTracker::end();
         BaseTracker::draw();
