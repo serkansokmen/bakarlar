@@ -50,8 +50,7 @@
 		E69C0D531C6F7A1500817555 /* assimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E69C0D4C1C6F7A1500817555 /* assimp.a */; };
 		E6B49B981C7BBCD30069DE70 /* Eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6B49B8E1C7BBCD30069DE70 /* Eye.cpp */; };
 		E6B49B991C7BBCD30069DE70 /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6B49B901C7BBCD30069DE70 /* Grid.cpp */; };
-		E6B49B9A1C7BBCD30069DE70 /* ContourTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6B49B941C7BBCD30069DE70 /* ContourTracker.cpp */; };
-		E6B49B9B1C7BBCD30069DE70 /* Glow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6B49B961C7BBCD30069DE70 /* Glow.cpp */; };
+		E6B49B9A1C7BBCD30069DE70 /* ColorTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6B49B941C7BBCD30069DE70 /* ColorTracker.cpp */; };
 		E6E9EF6C1C69787900F62A98 /* ETF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E9EF4F1C69787900F62A98 /* ETF.cpp */; };
 		E6E9EF6D1C69787900F62A98 /* fdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E9EF501C69787900F62A98 /* fdog.cpp */; };
 		E6E9EF6E1C69787900F62A98 /* Calibration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E9EF601C69787900F62A98 /* Calibration.cpp */; };
@@ -66,6 +65,7 @@
 		E6E9EF771C69787900F62A98 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E9EF691C69787900F62A98 /* Utilities.cpp */; };
 		E6E9EF781C69787900F62A98 /* Wrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6E9EF6A1C69787900F62A98 /* Wrappers.cpp */; };
 		E6E9EF791C69787900F62A98 /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E6E9EF6B1C69787900F62A98 /* opencv.a */; };
+		E6F7FE781C7EA84E00A267F7 /* FlowTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F7FE761C7EA84E00A267F7 /* FlowTracker.cpp */; };
 		F285EB3169F1566CA3D93C20 /* ofxPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E112B3AEBEA2C091BF2B40AE /* ofxPanel.cpp */; };
 		F4135EEFC911E9ED211FB6F9 /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = CF528C0E8DBFF5C31E8D6529 /* core.c */; };
 		FCC16AB16073FF0581F50ED7 /* loader.c in Sources */ = {isa = PBXBuildFile; fileRef = FE25F20F363BC625B852BFBC /* loader.c */; };
@@ -246,10 +246,8 @@
 		E6B49B901C7BBCD30069DE70 /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
 		E6B49B911C7BBCD30069DE70 /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
 		E6B49B921C7BBCD30069DE70 /* EyeImageSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EyeImageSet.h; sourceTree = "<group>"; };
-		E6B49B941C7BBCD30069DE70 /* ContourTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContourTracker.cpp; sourceTree = "<group>"; };
-		E6B49B951C7BBCD30069DE70 /* ContourTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContourTracker.h; sourceTree = "<group>"; };
-		E6B49B961C7BBCD30069DE70 /* Glow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Glow.cpp; sourceTree = "<group>"; };
-		E6B49B971C7BBCD30069DE70 /* Glow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Glow.h; sourceTree = "<group>"; };
+		E6B49B941C7BBCD30069DE70 /* ColorTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorTracker.cpp; sourceTree = "<group>"; };
+		E6B49B951C7BBCD30069DE70 /* ColorTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorTracker.h; sourceTree = "<group>"; };
 		E6E9EF441C69787900F62A98 /* ofxCv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxCv.h; sourceTree = "<group>"; };
 		E6E9EF461C69787900F62A98 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		E6E9EF4A1C69787900F62A98 /* ETF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ETF.h; sourceTree = "<group>"; };
@@ -281,6 +279,9 @@
 		E6E9EF691C69787900F62A98 /* Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Utilities.cpp; sourceTree = "<group>"; };
 		E6E9EF6A1C69787900F62A98 /* Wrappers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Wrappers.cpp; sourceTree = "<group>"; };
 		E6E9EF6B1C69787900F62A98 /* opencv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = opencv.a; path = ../../../addons/ofxCv/../ofxOpenCv/libs/opencv/lib/osx/opencv.a; sourceTree = "<group>"; };
+		E6F7FE741C7EA11400A267F7 /* BaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTracker.h; sourceTree = "<group>"; };
+		E6F7FE761C7EA84E00A267F7 /* FlowTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlowTracker.cpp; sourceTree = "<group>"; };
+		E6F7FE771C7EA84E00A267F7 /* FlowTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlowTracker.h; sourceTree = "<group>"; };
 		ECF8674C7975F1063C5E30CA /* ofxGuiGroup.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxGuiGroup.cpp; path = ../../../addons/ofxGui/src/ofxGuiGroup.cpp; sourceTree = SOURCE_ROOT; };
 		F7CFEE77982205D3F1496C03 /* ofxAnimatable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxAnimatable.cpp; path = ../../../addons/ofxAnimatable/src/ofxAnimatable.cpp; sourceTree = SOURCE_ROOT; };
 		FE25F20F363BC625B852BFBC /* loader.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 30; name = loader.c; path = ../../../addons/ofxKinect/libs/libfreenect/src/loader.c; sourceTree = SOURCE_ROOT; };
@@ -749,10 +750,11 @@
 		E6B49B931C7BBCD30069DE70 /* tracker */ = {
 			isa = PBXGroup;
 			children = (
-				E6B49B941C7BBCD30069DE70 /* ContourTracker.cpp */,
-				E6B49B951C7BBCD30069DE70 /* ContourTracker.h */,
-				E6B49B961C7BBCD30069DE70 /* Glow.cpp */,
-				E6B49B971C7BBCD30069DE70 /* Glow.h */,
+				E6B49B941C7BBCD30069DE70 /* ColorTracker.cpp */,
+				E6B49B951C7BBCD30069DE70 /* ColorTracker.h */,
+				E6F7FE761C7EA84E00A267F7 /* FlowTracker.cpp */,
+				E6F7FE771C7EA84E00A267F7 /* FlowTracker.h */,
+				E6F7FE741C7EA11400A267F7 /* BaseTracker.h */,
 			);
 			path = tracker;
 			sourceTree = "<group>";
@@ -1022,12 +1024,11 @@
 				5D067CF087427621DD1E64B8 /* ofxAnimatableFloat.cpp in Sources */,
 				E6E9EF6F1C69787900F62A98 /* ContourFinder.cpp in Sources */,
 				E69C0CFE1C6BAD0F00817555 /* Patch.cc in Sources */,
-				E6B49B9B1C7BBCD30069DE70 /* Glow.cpp in Sources */,
 				74D31933EE82E12834DB3B06 /* ofxAnimatableOfColor.cpp in Sources */,
 				BC054B7D3B48B395B1D87F2E /* ofxAnimatableOfPoint.cpp in Sources */,
 				856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */,
 				E6E9EF741C69787900F62A98 /* ObjectFinder.cpp in Sources */,
-				E6B49B9A1C7BBCD30069DE70 /* ContourTracker.cpp in Sources */,
+				E6B49B9A1C7BBCD30069DE70 /* ColorTracker.cpp in Sources */,
 				E6B49B981C7BBCD30069DE70 /* Eye.cpp in Sources */,
 				E6B49B991C7BBCD30069DE70 /* Grid.cpp in Sources */,
 				5CBB2AB3A60F65431D7B555D /* ofxButton.cpp in Sources */,
@@ -1064,6 +1065,7 @@
 				FCC16AB16073FF0581F50ED7 /* loader.c in Sources */,
 				E6E9EF761C69787900F62A98 /* Tracker.cpp in Sources */,
 				D31F5C1B140C59B2AF1533A8 /* registration.c in Sources */,
+				E6F7FE781C7EA84E00A267F7 /* FlowTracker.cpp in Sources */,
 				49BEEB2DFA5319D55AA6899F /* tilt.c in Sources */,
 				255A7B680DC81E543C875794 /* usb_libusb10.c in Sources */,
 			);
