@@ -6,7 +6,6 @@
 #include "ofxCameraSaveLoad.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ColorTracker.h"
-#include "FlowTracker.h"
 #include "Grid.h"
 
 
@@ -37,7 +36,6 @@ public:
     ofxKinect               kinect;
     unique_ptr<ofPixels>    trackPixels;
     tracker::ColorTracker   colorTracker;
-    tracker::FlowTracker    flowTracker;
     eyegrid::Grid           eyeGrid;
     unique_ptr<ofxAnimatableOfPoint>     lookAt;
     

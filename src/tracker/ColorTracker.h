@@ -11,15 +11,18 @@ namespace tracker {
     class ColorTracker : public BaseTracker {
         
     private:
-        ofxCv::ContourFinder contourFinder;
-        
-        ofImage colorImage;
-        cv::Mat src;
+        ofxCv::ContourFinder        contourFinder;
         ofxCv::TrackingColorMode    trackingColorMode;
+        ofImage colorImage;
+        
+        void setMinAreaRadius(float& val);
+        void setMaxAreaRadius(float& val);
+        void setThreshold(float& val);
+        void setTrackingColor(ofColor& color);
         
     public:
         ofParameter<ofColor>    targetColor;
-        ofParameter<float>      minAreaNorm, threshold;
+        ofParameter<float>      minAreaRadius, maxAreaRadius, threshold;
         ofParameter<int>        blur;
         
         ColorTracker();
@@ -30,12 +33,6 @@ namespace tracker {
         
         inline const vector<cv::Rect>& getBoundingRects() const {
             return contourFinder.getBoundingRects();
-        }
-//        inline const ofPoint getAverage() const {
-//            
-//        }
-        inline void setTrackingColor(ofColor& c) {
-            contourFinder.setTargetColor(c, trackingColorMode);
         }
     };
 };

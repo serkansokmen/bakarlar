@@ -77,8 +77,6 @@ void Grid::draw(){
     eyesFbo.draw(this->rect);
 }
 
-#pragma mark
-
 //--------------------------------------------------------------
 void Grid::initEyes(){
     
