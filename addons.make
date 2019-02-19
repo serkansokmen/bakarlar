@@ -1,3 +1,6 @@
 ofxAnimatable
+ofxCameraSaveLoad
+ofxCv
 ofxGui
 ofxKinect
+ofxOpenCv
