@@ -7,7 +7,7 @@ using namespace tracker;
 //--------------------------------------------------------------
 ColorTracker::ColorTracker(){
 
-    BaseTracker::BaseTracker();
+    BaseTracker();
     
     params.setName("Contour Tracker");
     params.add(minAreaRadius.set("Min Area Radius", 10.0, 1.0, min(GRABBER_WIDTH, GRABBER_HEIGHT)));

@@ -125,8 +125,8 @@ void Grid::lookAt(const ofPoint &lookAt){
             default:
                 break;
         }
-//        if (!eye->pupilPos.isAnimating())
-        eye->pupilPos.animateTo(v);
+        if (!eye->pupilPos.isAnimating())
+            eye->pupilPos.animateTo(v);
     }
 }
 

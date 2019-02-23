@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "ofxAssimpUtils.h"
 
 
 using namespace eyegrid;
@@ -8,7 +7,7 @@ using namespace eyegrid;
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetLogLevel(OF_LOG_WARNING);
     ofSetVerticalSync(true);
     ofBackground(0);
     ofSetFrameRate(60);

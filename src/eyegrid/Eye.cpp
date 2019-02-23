@@ -63,7 +63,9 @@ void Eye::draw(const bool& debugMode){
             whiteImg->draw(restPos, eyeWidth, eyeHeight);
         ofSetRectMode(OF_RECTMODE_CENTER);
         if (pupilImg->isAllocated())
-            pupilImg->draw(pupilPos.getCurrentPosition() + eyeRadius*0.5, eyeRadius*EYE_PUPIL_SCL_MULT, eyeRadius*EYE_PUPIL_SCL_MULT);
+            pupilImg->draw(pupilPos.getCurrentPosition() + eyeRadius*0.5,
+                           eyeRadius*EYE_PUPIL_SCL_MULT,
+                           eyeRadius*EYE_PUPIL_SCL_MULT);
         ofSetRectMode(OF_RECTMODE_CORNER);
         if (surfaceImg->isAllocated())
             surfaceImg->draw(restPos, eyeWidth, eyeHeight);
