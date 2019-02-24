@@ -29,7 +29,8 @@ namespace eyegrid {
         void update();
         void draw(const bool& debugMode);
         
-        ofxAnimatableOfPoint  pupilPos;
+//        ofxAnimatableOfPoint  pupilPos;
+        ofVec2f               lookAt;
         ofVec2f               restPos;
         
         inline void setImageLayer(shared_ptr<ofImage> img, const string& layerName) {

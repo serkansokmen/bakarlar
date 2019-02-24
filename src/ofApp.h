@@ -2,12 +2,14 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "ofxKinect.h"
-#include "ofxCameraSaveLoad.h"
+//#include "ofxDatGui.h"
 #include "ofxAnimatableOfPoint.h"
-#include "ColorTracker.h"
+#include "ofxLibwebsockets.h"
 #include "Grid.h"
 
+// listening port
+#define CLIENT "localhost"
+#define PORT 8080
 
 class ofApp : public ofBaseApp {
     
@@ -23,26 +25,26 @@ public:
     void keyPressed(int key);
     void windowResized(int w, int h);
     
-    void toggleGrabber(bool& yes);
-    void togglePlayer(bool& yes);
-    void toggleKinect(bool& yes);
+    ofxLibwebsockets::Client client;
     
-    inline bool isTracking() {
-        return bUseGrabber == true || bUsePlayer == true || bUseKinect == true;
-    }
+    // websocket methods
+    void onConnect( ofxLibwebsockets::Event& args );
+    void onOpen( ofxLibwebsockets::Event& args );
+    void onClose( ofxLibwebsockets::Event& args );
+    void onIdle( ofxLibwebsockets::Event& args );
+    void onMessage( ofxLibwebsockets::Event& args );
+    void onBroadcast( ofxLibwebsockets::Event& args );
     
-    ofVideoGrabber          grabber;
-    ofVideoPlayer           player;
-    ofxKinect               kinect;
-    unique_ptr<ofPixels>    trackPixels;
-    tracker::ColorTracker   colorTracker;
-    eyegrid::Grid           eyeGrid;
-    unique_ptr<ofxAnimatableOfPoint>     lookAt;
+    eyegrid::Grid                            eyeGrid;
+    vector<shared_ptr<ofxAnimatableOfPoint>> lookAtPositions;
+    vector<ofPoint>                          lastPositions;
     
     ofxPanel                gui;
-    ofParameter<bool>       bUseGrabber;
-    ofParameter<bool>       bUsePlayer;
-    ofParameter<bool>       bUseKinect;
+//    ofxDatGui               *datGui;
+    
+//    ofParameter<bool>       bUseGrabber;
+//    ofParameter<bool>       bUsePlayer;
+//    ofParameter<bool>       bUseKinect;
     ofRectangle             gridRect;
     
     bool bDrawGui;

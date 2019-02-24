@@ -19,15 +19,15 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 	
     eyeRadius = min(eyeWidth, eyeHeight);
     
-    pupilPos.setPosition(restPos);
-    pupilPos.setRepeatType(PLAY_ONCE);
-    pupilPos.setRepeatTimes(0);
+//    pupilPos.setPosition(restPos);
+//    pupilPos.setRepeatType(PLAY_ONCE);
+//    pupilPos.setRepeatTimes(0);
 }
 
 //--------------------------------------------------------------
 void Eye::update(){
-    float dt = 1.0f / 60.0f;
-    pupilPos.update(dt);
+//    float dt = 1.0f / 60.0f;
+//    pupilPos.update(dt);
 }
 
 //--------------------------------------------------------------
@@ -45,7 +45,8 @@ void Eye::draw(const bool& debugMode){
         ofNoFill();
         ofDrawCircle(restPos, eyeRadius*EYE_PERIPHERY_MULT);
         ofSetColor(150);
-        ofTranslate(pupilPos.getCurrentPosition());
+//        ofTranslate(pupilPos.getCurrentPosition());
+        ofTranslate(lookAt);
         ofDrawCircle(0, 0, eyeRadius*EYE_PUPIL_SCL_MULT);
 
         float length = eyeRadius * .1f;
@@ -62,10 +63,14 @@ void Eye::draw(const bool& debugMode){
         if (whiteImg->isAllocated())
             whiteImg->draw(restPos, eyeWidth, eyeHeight);
         ofSetRectMode(OF_RECTMODE_CENTER);
-        if (pupilImg->isAllocated())
-            pupilImg->draw(pupilPos.getCurrentPosition() + eyeRadius*0.5,
+        if (pupilImg->isAllocated()) {
+            //            pupilImg->draw(pupilPos.getCurrentPosition() + eyeRadius * 0.5,
+            //                           eyeRadius*EYE_PUPIL_SCL_MULT,
+            //                           eyeRadius*EYE_PUPIL_SCL_MULT);
+            pupilImg->draw(lookAt + eyeRadius * 0.5,
                            eyeRadius*EYE_PUPIL_SCL_MULT,
                            eyeRadius*EYE_PUPIL_SCL_MULT);
+        }
         ofSetRectMode(OF_RECTMODE_CORNER);
         if (surfaceImg->isAllocated())
             surfaceImg->draw(restPos, eyeWidth, eyeHeight);
