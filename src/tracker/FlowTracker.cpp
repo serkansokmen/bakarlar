@@ -7,7 +7,7 @@ using namespace tracker;
 //--------------------------------------------------------------
 FlowTracker::FlowTracker(){
     
-    BaseTracker::BaseTracker();
+    BaseTracker();
     
     params.setName("Flow Tracker");
     params.add(lkMaxLevel.set("lkMaxLevel", 3, 0, 8));

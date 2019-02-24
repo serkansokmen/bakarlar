@@ -56,10 +56,26 @@ void Grid::setup(const ofRectangle& rect, int c, int r){
 }
 
 //--------------------------------------------------------------
-void Grid::update(){
+void Grid::update(const vector<shared_ptr<ofxAnimatableOfPoint>>& positions) {
+    
     for (auto & eye : eyes) {
+        
+        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, this->rect.getHeight());
+        
+        if (positions.size() > 0) {
+            auto pos = positions[0];
+            ofVec2f v = eye->restPos.getInterpolated(pos->getCurrentPosition(), perc);
+            eye->lookAt.set(v);
+//            if (!pos->isAnimating()) {
+                //                eye->pupilPos.getDuration()
+//                eye->pupilPos.animateTo(v);
+//            }
+        }
+//        eye->pupilPos.animateTo(eye->restPos);
+    
         eye->update();
     }
+    
 }
 
 //--------------------------------------------------------------
@@ -104,36 +120,36 @@ void Grid::initEyes(){
 }
 
 //--------------------------------------------------------------
-void Grid::lookAt(const ofPoint &lookAt){
-    
-    for (auto & eye : eyes) {
-        
-        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, this->rect.getHeight());
-        ofVec2f v = eye->restPos.getInterpolated(lookAt, perc);
-        eye->pupilPos.setDuration(ofRandom(0.8) + 0.2);
-        int rand = (int)ofRandom(0, 300);
-        switch (rand) {
-            case 0:
-                eye->pupilPos.setCurve(EASE_OUT);
-                break;
-            case 1:
-                eye->pupilPos.setCurve(LATE_EASE_IN_EASE_OUT);
-                break;
-            case 2:
-                eye->pupilPos.setCurve(VERY_LATE_LINEAR);
-                break;
-            default:
-                break;
-        }
+//void Grid::lookAt(const ofPoint &lookAt){
+//    
+//    for (auto & eye : eyes) {
+//        
+//        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, this->rect.getHeight());
+//        ofVec2f v = eye->restPos.getInterpolated(lookAt, perc);
+//        eye->pupilPos.setDuration(ofRandom(0.8) + 0.2);
+//        int rand = (int)ofRandom(0, 300);
+//        switch (rand) {
+//            case 0:
+//                eye->pupilPos.setCurve(EASE_OUT);
+//                break;
+//            case 1:
+//                eye->pupilPos.setCurve(LATE_EASE_IN_EASE_OUT);
+//                break;
+//            case 2:
+//                eye->pupilPos.setCurve(VERY_LATE_LINEAR);
+//                break;
+//            default:
+//                break;
+//        }
 //        if (!eye->pupilPos.isAnimating())
-        eye->pupilPos.animateTo(v);
-    }
-}
+//            eye->pupilPos.animateTo(v);
+//    }
+//}
 
 //--------------------------------------------------------------
 void Grid::rest() {
-    for (auto & eye : eyes) {
-        eye->pupilPos.animateTo(eye->restPos);
-    }
+//    for (auto & eye : eyes) {
+//        eye->pupilPos.animateTo(eye->restPos);
+//    }
 }
 

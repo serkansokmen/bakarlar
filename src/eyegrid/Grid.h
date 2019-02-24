@@ -12,6 +12,8 @@ namespace eyegrid {
     
     private:
         void initEyes();
+//        void lookAt(const ofPoint &lookAt);
+        void rest();
         
         ofFbo           eyesFbo;
         ofRectangle     rect;
@@ -35,10 +37,8 @@ namespace eyegrid {
         ~Grid();
         
         void setup(const ofRectangle& rect, int cols, int rows);
-        void update();
+        void update(const vector<shared_ptr<ofxAnimatableOfPoint>>& positions);
         void draw();
-        void lookAt(const ofPoint &lookAt);
-        void rest();
         
         inline ofRectangle getRectangle(){
             return this->rect;
