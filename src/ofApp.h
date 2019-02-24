@@ -2,14 +2,15 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-//#include "ofxDatGui.h"
+#include "ofxOsc.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ofxLibwebsockets.h"
 #include "Grid.h"
 
 // listening port
-#define CLIENT "localhost"
-#define PORT 8080
+#define CLIENT_HOST "localhost"
+#define CLIENT_PORT 8080
+#define OSC_PORT    3000
 
 class ofApp : public ofBaseApp {
     
@@ -38,6 +39,8 @@ public:
     eyegrid::Grid                            eyeGrid;
     vector<shared_ptr<ofxAnimatableOfPoint>> lookAtPositions;
     vector<ofPoint>                          lastPositions;
+    
+    ofxOscReceiver receiver;
     
     ofxPanel                gui;
 //    ofxDatGui               *datGui;

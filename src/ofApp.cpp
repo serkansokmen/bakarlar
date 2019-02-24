@@ -47,8 +47,8 @@ void ofApp::setup(){
     ofxLibwebsockets::ClientOptions options = ofxLibwebsockets::defaultClientOptions();
     
     // 2 - set basic params
-    options.host = CLIENT;
-    options.port = PORT;
+    options.host = CLIENT_HOST;
+    options.port = CLIENT_PORT;
     
     // advanced: set keep-alive timeouts for events like
     // loss of internet
@@ -64,6 +64,9 @@ void ofApp::setup(){
     // 4 - connect
     client.connect(options);
     client.addListener(this);
+    
+    // setup osc
+    receiver.setup(OSC_PORT);
     
     // Setup params
     gui.setName("Settings");
@@ -97,6 +100,15 @@ void ofApp::update(){
 //    ofRemove(lookAtPositions, removeLookAt);
     for (int i=0; i<lookAtPositions.size(); ++i) {
         lookAtPositions[i]->update(dt);
+    }
+    
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(m);
+        if (m.getAddress() == "/debug") {
+            bDrawGui = !bDrawGui;
+        }
     }
     
 //    if (!lookAt->isAnimating()){
