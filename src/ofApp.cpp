@@ -3,39 +3,15 @@
 
 using namespace eyegrid;
 
-bool removeLookAt(const shared_ptr<ofxAnimatableOfPoint>& lookAt){
-    return !lookAt->isAnimating();
-}
-
-shared_ptr<ofxAnimatableOfPoint> getLookAt(const ofVec2f& vec) {
-    auto lookAt = shared_ptr<ofxAnimatableOfPoint>(new ofxAnimatableOfPoint);
-    lookAt->setDuration(ofRandom(0.8) + 0.2 + 0.8);
-//    lookAt->setPosition(lastPositions[i]);
-    lookAt->setRepeatType(PLAY_ONCE);
-    lookAt->setRepeatTimes(0);
-    int rand = (int)ofRandom(0, 3);
-    switch (rand) {
-        case 0:
-            lookAt->setCurve(EASE_OUT);
-            break;
-        case 1:
-            lookAt->setCurve(LATE_EASE_IN_EASE_OUT);
-            break;
-        case 2:
-            lookAt->setCurve(VERY_LATE_LINEAR);
-            break;
-        default:
-            break;
-    }
-    lookAt->animateTo(vec);
-    return lookAt;
+bool in_array(const std::string &value, const std::vector<string> &array){
+    return std::find(array.begin(), array.end(), value) != array.end();
 }
 
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    
+    ofSetLogLevel(OF_LOG_NOTICE);
     ofSetVerticalSync(true);
     ofBackground(0);
     ofSetFrameRate(60);
@@ -47,8 +23,8 @@ void ofApp::setup(){
     ofxLibwebsockets::ClientOptions options = ofxLibwebsockets::defaultClientOptions();
     
     // 2 - set basic params
-    options.host = CLIENT;
-    options.port = PORT;
+    options.host = CLIENT_HOST;
+    options.port = CLIENT_PORT;
     
     // advanced: set keep-alive timeouts for events like
     // loss of internet
@@ -65,6 +41,9 @@ void ofApp::setup(){
     client.connect(options);
     client.addListener(this);
     
+    // setup osc
+    receiver.setup(OSC_PORT);
+    
     // Setup params
     gui.setName("Settings");
     ofParameterGroup params;
@@ -72,39 +51,39 @@ void ofApp::setup(){
     params.add(eyeGrid.params);
     gui.setup(params);
     
-//    datGui = new ofxDatGui(ofxDatGuiAnchor::TOP_LEFT);
-//    datGui->addSlider(eyeGrid.params);
-//    datGui->addToggle("Debug", bDrawGui);
+    //    datGui = new ofxDatGui(ofxDatGuiAnchor::TOP_LEFT);
+    //    datGui->addSlider(eyeGrid.params);
+    //    datGui->addToggle("Debug", bDrawGui);
     
     gui.loadFromFile("settings.xml");
     bDrawGui = true;
     
     gridRect.set(0, 0, ofGetWidth(), ofGetHeight());
     eyeGrid.setup(gridRect, eyeGrid.cols, eyeGrid.rows);
-    for (int i=0; i<eyeGrid.cols * eyeGrid.rows; ++i) {
-        lookAtPositions.push_back(getLookAt(ofGetWindowSize() / 2));
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    eyeGrid.update(lookAtPositions);
-//    datGui->setAutoDraw(bDrawGui);
-    
     float dt = 1.0f / 60.0f;
     
-//    ofRemove(lookAtPositions, removeLookAt);
-    for (int i=0; i<lookAtPositions.size(); ++i) {
-        lookAtPositions[i]->update(dt);
+    eyeGrid.update(poseVecs);
+    
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(m);
+        if (m.getAddress() == "/debug") {
+            bDrawGui = !bDrawGui;
+        }
     }
     
-//    if (!lookAt->isAnimating()){
-//        eyeGrid.lookAt(ofVec2f(lookAt->getCurrentPosition().x, lookAt->getCurrentPosition().y));
-//    } else {
-//        // TODO: add behaivoral lookAt
-//        eyeGrid.rest();
-//    }
+    //    if (!lookAt->isAnimating()){
+    //        eyeGrid.lookAt(ofVec2f(lookAt->getCurrentPosition().x, lookAt->getCurrentPosition().y));
+    //    } else {
+    //        // TODO: add behaivoral lookAt
+    //        eyeGrid.rest();
+    //    }
 }
 
 //--------------------------------------------------------------
@@ -112,15 +91,14 @@ void ofApp::draw(){
     
     eyeGrid.draw();
     
-    if (bDrawGui) {
-//        ofDrawCircle(lookAt->getCurrentPosition(), 20);
-        gui.draw();
-        
-        for (auto &pos: lookAtPositions) {
-            if (pos->isAnimating()) {
-                ofDrawCircle(pos->getCurrentPosition(), 10);
-            }
+    if (eyeGrid.bDebugMode || bDrawGui) {
+        for (auto &vec: poseVecs) {
+            ofDrawCircle(vec, 20);
         }
+    }
+    
+    if (bDrawGui) {
+        gui.draw();
     }
 }
 
@@ -146,33 +124,50 @@ void ofApp::onIdle( ofxLibwebsockets::Event& args ){
 
 //--------------------------------------------------------------
 void ofApp::onMessage( ofxLibwebsockets::Event& args ){
-    ofLog(OF_LOG_NOTICE, args.message);
+//    ofLog(OF_LOG_NOTICE, args.message);
     
     int width = args.json["image"]["width"];
     int height = args.json["image"]["height"];
     
     int numPoses = args.json["poses"].size();
-//    lastPositions.resize(numPoses);
     
+//    int numExistingPoses = poseVecs.size();
+    poseVecs.clear();
     for (int poseIndex = 0; poseIndex < numPoses; ++poseIndex) {
         auto pose = args.json["poses"][poseIndex];
         auto keypoints = pose["keypoints"];
-        auto partName = keypoints[poseIndex]["part"];
-
-        if (partName == "nose") {
-            if (!lookAtPositions[poseIndex]->isAnimating()) {
-                float x = keypoints[poseIndex]["position"]["x"];
-                float y = keypoints[poseIndex]["position"]["y"];
-                x = ofNormalize(x, 0, width) * ofGetWidth();
-                y = ofNormalize(y, 0, height) * ofGetHeight();
-                auto vec = ofVec2f(x, y);
-//                auto lookAt = getLookAt(vec);
-                lookAtPositions[poseIndex]->animateTo(vec);
-            }
-//            lastPositions[i].set(vec);
-        }
+        float score = pose["score"];
         
-        ofLog(OF_LOG_VERBOSE, partName);
+        if (score < 0.2) { return; }
+        
+        for (auto &keypoint : keypoints) {
+            auto partName = keypoint["part"];
+            float partScore = keypoint["score"];
+            
+            if (in_array(partName, ALOWED_TRACK_PARTS) && partScore > 0.5) {
+//            if (partName == "nose" && partScore > 0.5) {
+                
+                if (poseVecs.size() <= poseIndex) {
+                    float x = keypoints[poseIndex]["position"]["x"];
+                    float y = keypoints[poseIndex]["position"]["y"];
+                    x = ofNormalize(x, 0, width);
+                    y = ofNormalize(y, 0, height);
+                    x *= ofGetWindowWidth();
+                    y *= ofGetWindowHeight();
+                    auto vec = ofVec2f(x, y);
+                    poseVecs.push_back(vec);
+                    break;
+                }
+                //                        poseVecs[poseIndex].set(vec);
+                //                    break;
+                //                average += vec;
+            }
+        }
+        //        average = average / numPoses;
+        //        average.x *= ofGetWindowWidth();
+        //        average.y *= ofGetWindowHeight();
+        
+        //        poseVecs[poseIndex].set(average);
     }
 }
 
@@ -203,24 +198,26 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-//    ofRectangle rect(colorTracker.drawPos.get(), GRABBER_WIDTH, GRABBER_HEIGHT);
-//    if (isTracking() && rect.inside(x, y)) {
-//        if (bUseGrabber) {
-//            *trackPixels = grabber.getPixels();
-//        } else if (bUsePlayer) {
-//            *trackPixels = player.getPixels();
-//        } else if (bUseKinect) {
-//            *trackPixels = kinect.getDepthPixels();
-//        };
-//        colorTracker.targetColor = trackPixels->getColor(x - colorTracker.drawPos->x, y - colorTracker.drawPos->y);
-//    }
+    //    ofRectangle rect(colorTracker.drawPos.get(), GRABBER_WIDTH, GRABBER_HEIGHT);
+    //    if (isTracking() && rect.inside(x, y)) {
+    //        if (bUseGrabber) {
+    //            *trackPixels = grabber.getPixels();
+    //        } else if (bUsePlayer) {
+    //            *trackPixels = player.getPixels();
+    //        } else if (bUseKinect) {
+    //            *trackPixels = kinect.getDepthPixels();
+    //        };
+    //        colorTracker.targetColor = trackPixels->getColor(x - colorTracker.drawPos->x, y - colorTracker.drawPos->y);
+    //    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-//    if (!isTracking()) {
-//        lookAt->animateTo(ofVec2f(x, y));
-//    }
+    if (bDrawGui) {
+        //        for (auto &pos : poseVecs) {
+        //            pos.set(x, y);
+        //        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -234,11 +231,12 @@ void ofApp::windowResized(int w, int h){
 //--------------------------------------------------------------
 void ofApp::exit(){
     
-//    bUseGrabber.removeListener(this, &ofApp::toggleGrabber);
-//    bUsePlayer.removeListener(this, &ofApp::togglePlayer);
-//    bUseKinect.removeListener(this, &ofApp::toggleKinect);
-//
-//    player.close();
-//    kinect.close();
+    //    bUseGrabber.removeListener(this, &ofApp::toggleGrabber);
+    //    bUsePlayer.removeListener(this, &ofApp::togglePlayer);
+    //    bUseKinect.removeListener(this, &ofApp::toggleKinect);
+    //
+    //    player.close();
+    //    kinect.close();
     gui.saveToFile("settings.xml");
 }
+

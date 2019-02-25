@@ -4,20 +4,37 @@
 
 using namespace eyegrid;
 
+AnimCurve getRandomAnimCurve() {
+    int rand = (int)ofRandom(0, 3);
+    switch (rand) {
+        case 0:
+            return EASE_OUT;
+            break;
+        case 1:
+            return LATE_EASE_IN_EASE_OUT;
+            break;
+        case 2:
+            return VERY_LATE_LINEAR;
+            break;
+        default:
+            return EASE_OUT_BACK;
+            break;
+    }
+}
 
 //--------------------------------------------------------------
 void Eye::setup(const ofVec2f &p, float w, float h)
 {
+    fbo.allocate(w, h);
     fbo.begin();
     ofClear(0, 0, 0, 0);
     fbo.end();
     
-    eyeWidth = w;
-    eyeHeight = h;
+    eyeRect.set(p, w, h);
     
-    restPos.set(p.x, p.y);
-	
-    eyeRadius = min(eyeWidth, eyeHeight);
+    lookAtAnim.setPosition(eyeRect.getCenter());
+    lookAtAnim.setRepeatType(PLAY_ONCE);
+    lookAtAnim.setRepeatTimes(0);
     
 //    pupilPos.setPosition(restPos);
 //    pupilPos.setRepeatType(PLAY_ONCE);
@@ -26,57 +43,78 @@ void Eye::setup(const ofVec2f &p, float w, float h)
 
 //--------------------------------------------------------------
 void Eye::update(){
-//    float dt = 1.0f / 60.0f;
-//    pupilPos.update(dt);
+    float dt = 1.0f / 60.0f;
+    lookAtAnim.update(dt);
 }
 
 //--------------------------------------------------------------
 void Eye::draw(const bool& debugMode){
 	
-    float cx = eyeRadius/2;
-	float cy = eyeRadius/2;
-	
+    auto lookAt = lookAtAnim.getCurrentPosition();
+    
 	if (debugMode){
+        
+        float r = sqrt(eyeRect.getPerimeter());
         
         ofPushStyle();
         ofPushMatrix();
-        ofTranslate(eyeRadius*0.5, eyeRadius*0.5);
+//        ofTranslate(eyeRect.getWidth() * 0.5, eyeRect.getHeight() * 0.5);
         ofSetColor(80);
+        ofSetLineWidth(2);
         ofNoFill();
-        ofDrawCircle(restPos, eyeRadius*EYE_PERIPHERY_MULT);
+        ofDrawRectangle(eyeRect);
+        ofDrawCircle(eyeRect.getCenter(), r * EYE_PERIPHERY_MULT);
         ofSetColor(150);
-//        ofTranslate(pupilPos.getCurrentPosition());
         ofTranslate(lookAt);
-        ofDrawCircle(0, 0, eyeRadius*EYE_PUPIL_SCL_MULT);
+        ofDrawCircle(0, 0, r * EYE_PUPIL_SCL_MULT);
 
-        float length = eyeRadius * .1f;
+        float length = r * .1f;
         ofSetColor(255);
         ofDrawLine(-length, 0, length, 0);
         ofDrawLine(0, length, 0, -length);
         ofPopMatrix();
         ofPopStyle();
         
-	} else {
+    } else if (whiteImg->isAllocated() &&
+               pupilImg->isAllocated() &&
+               surfaceImg->isAllocated() &&
+               shadeImg -> isAllocated()) {
         
-        fbo.begin();
+        ofPushMatrix();
         ofSetColor(255, 255);
-        if (whiteImg->isAllocated())
-            whiteImg->draw(restPos, eyeWidth, eyeHeight);
-        ofSetRectMode(OF_RECTMODE_CENTER);
-        if (pupilImg->isAllocated()) {
-            //            pupilImg->draw(pupilPos.getCurrentPosition() + eyeRadius * 0.5,
-            //                           eyeRadius*EYE_PUPIL_SCL_MULT,
-            //                           eyeRadius*EYE_PUPIL_SCL_MULT);
-            pupilImg->draw(lookAt + eyeRadius * 0.5,
-                           eyeRadius*EYE_PUPIL_SCL_MULT,
-                           eyeRadius*EYE_PUPIL_SCL_MULT);
+        if (whiteImg->isAllocated() &&
+            pupilImg->isAllocated() &&
+            surfaceImg->isAllocated() &&
+            shadeImg->isAllocated()) {
+            
+            whiteImg->draw(eyeRect);
+            ofSetRectMode(OF_RECTMODE_CENTER);
+            pupilImg->draw(lookAt,
+                           eyeRect.getWidth() * EYE_PUPIL_SCL_MULT,
+                           eyeRect.getHeight() * EYE_PUPIL_SCL_MULT);
+            ofSetRectMode(OF_RECTMODE_CORNER);
+            
+            surfaceImg->draw(eyeRect);
+            shadeImg->draw(eyeRect);
         }
-        ofSetRectMode(OF_RECTMODE_CORNER);
-        if (surfaceImg->isAllocated())
-            surfaceImg->draw(restPos, eyeWidth, eyeHeight);
-        if (shadeImg->isAllocated())
-            shadeImg->draw(restPos, eyeWidth, eyeHeight);
-        fbo.end();
-        fbo.draw(restPos, eyeWidth, eyeHeight);
+        ofPopMatrix();
+
 	}
+}
+
+void Eye::lookAt(const ofVec2f& vec) {
+    
+//    ofLog(OF_LOG_NOTICE, ofToString(lastLookAt));
+//
+    if (lastLookAt < 100) {
+        lastLookAt++;
+        return;
+    }
+    
+    if (!lookAtAnim.isAnimating()) {
+        lookAtAnim.setCurve(getRandomAnimCurve());
+        lookAtAnim.setDuration(ofRandom(0.8) + 0.2);
+        lastLookAt = 0;
+        lookAtAnim.animateTo(vec);
+    }
 }
