@@ -3,6 +3,9 @@
 
 using namespace eyegrid;
 
+bool removeLookAt(const shared_ptr<ofxAnimatableOfPoint>& lookAt){
+    return !lookAt->isAnimating();
+}
 
 //--------------------------------------------------------------
 Grid::Grid(){
@@ -56,60 +59,20 @@ void Grid::setup(const ofRectangle& rect, int c, int r){
 }
 
 //--------------------------------------------------------------
-void Grid::update(const vector<shared_ptr<ofxAnimatableOfPoint>>& positions) {
-    
-    for (auto & eye : eyes) {
-        
-        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, this->rect.getHeight());
-        
-        if (positions.size() > 0) {
-            auto pos = positions[0];
-            ofVec2f v = eye->restPos.getInterpolated(pos->getCurrentPosition(), perc);
-            eye->lookAt.set(v);
-//            if (!pos->isAnimating()) {
-                //                eye->pupilPos.getDuration()
-//                eye->pupilPos.animateTo(v);
-//            }
-        }
-//        eye->pupilPos.animateTo(eye->restPos);
-    
-        eye->update();
-    }
-    
-}
-
-//--------------------------------------------------------------
-void Grid::draw(){
-    
-    eyesFbo.begin();
-    ofClear(0, 0, 0, 0);
-    ofSetColor(ofColor::white);
-    for (auto & eye : eyes) {
-        eye->draw(this->bDebugMode);
-    }
-    eyesFbo.end();
-    
-    ofSetColor(ofColor::white);
-    eyesFbo.draw(this->rect);
-}
-
-//--------------------------------------------------------------
 void Grid::initEyes(){
     
     eyes.clear();
-    for (int i = 0; i<(int)this->cols; i ++){
+    
+    for (int i = 0; i<(int)cols; i ++){
         
-        float colPerc = (float)i / (float)this->cols;
-        
-        for (int j = 0; j<(int)this->rows; j++){
+        for (int j = 0; j<(int)rows; j++){
             
-            float rowPerc = (float)j / (float)this->rows;
-            float x = ofLerp(this->rect.getX(), this->rect.getWidth(), colPerc);
-            float y = ofLerp(this->rect.getY(), this->rect.getHeight(), rowPerc);
+            float x = ofLerp(rect.getX(), rect.getWidth(), (float)i / (float)cols);
+            float y = ofLerp(rect.getY(), rect.getHeight(), (float)j / (float)rows);
             int index = j + i * cols;
             
             shared_ptr<Eye> eye(new Eye());
-            eye->setup(ofVec2f(x, y), this->eyeRadius, this->eyeRadius);
+            eye->setup(ofVec2f(x, y), eyeRadius, eyeRadius);
             eye->setImageLayer(imageSet->surface, "surface");
             eye->setImageLayer(imageSet->white, "white");
             eye->setImageLayer(imageSet->pupil, "pupil");
@@ -120,11 +83,49 @@ void Grid::initEyes(){
 }
 
 //--------------------------------------------------------------
+void Grid::update(const vector<ofVec2f>& poseVecs) {
+    
+    int numPoses = poseVecs.size();
+    
+    for (int eyeIndex = 0; eyeIndex < cols * rows; ++eyeIndex) {
+        auto eye = eyes[eyeIndex];
+        
+        if (numPoses > 0) {
+            int poseIndex = (int)ofRandom(0, numPoses - 1);
+            ofVec2f targetPos = poseVecs[poseIndex];
+            float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0,
+                                     rect.getHeight());
+            ofVec2f eyeCenter = eye->eyeRect.getCenter();
+            ofVec2f normalizedPos = eyeCenter.getInterpolated(targetPos, perc);
+            eye->lookAt(normalizedPos);
+//            ofLog(OF_LOG_NOTICE, "Pose Index: " + ofToString(poseIndex));
+        }
+        
+        eye->update();
+    }
+}
+
+//--------------------------------------------------------------
+void Grid::draw(){
+    
+    eyesFbo.begin();
+    ofClear(0, 0, 0, 0);
+    ofSetColor(ofColor::white);
+    for (auto & eye : eyes) {
+        eye->draw(bDebugMode);
+    }
+    eyesFbo.end();
+    
+    ofSetColor(ofColor::white);
+    eyesFbo.draw(rect);
+}
+
+//--------------------------------------------------------------
 //void Grid::lookAt(const ofPoint &lookAt){
 //    
 //    for (auto & eye : eyes) {
 //        
-//        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, this->rect.getHeight());
+//        float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0, rect.getHeight());
 //        ofVec2f v = eye->restPos.getInterpolated(lookAt, perc);
 //        eye->pupilPos.setDuration(ofRandom(0.8) + 0.2);
 //        int rand = (int)ofRandom(0, 300);

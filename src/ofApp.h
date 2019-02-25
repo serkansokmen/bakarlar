@@ -36,11 +36,10 @@ public:
     void onMessage( ofxLibwebsockets::Event& args );
     void onBroadcast( ofxLibwebsockets::Event& args );
     
-    eyegrid::Grid                            eyeGrid;
-    vector<shared_ptr<ofxAnimatableOfPoint>> lookAtPositions;
-    vector<ofPoint>                          lastPositions;
+    eyegrid::Grid       eyeGrid;
+    vector<ofVec2f>     poseVecs;
     
-    ofxOscReceiver receiver;
+    ofxOscReceiver      receiver;
     
     ofxPanel                gui;
 //    ofxDatGui               *datGui;

@@ -12,14 +12,14 @@ namespace eyegrid {
         
     private:
         
+        ofxAnimatableOfPoint lookAtAnim;
+
         shared_ptr<ofImage> surfaceImg;
         shared_ptr<ofImage> whiteImg;
         shared_ptr<ofImage> pupilImg;
         shared_ptr<ofImage> shadeImg;
         
-        float eyeWidth;
-        float eyeHeight;
-        float eyeRadius;
+        float lastLookAt = 0;
         
         ofFbo fbo;
         
@@ -27,11 +27,10 @@ namespace eyegrid {
         
         void setup(const ofVec2f& pos, float w, float h);
         void update();
-        void draw(const bool& debugMode);
+        void draw(const bool &debugMode);
+        void lookAt(const ofVec2f& vec);
         
-//        ofxAnimatableOfPoint  pupilPos;
-        ofVec2f               lookAt;
-        ofVec2f               restPos;
+        ofRectangle eyeRect;
         
         inline void setImageLayer(shared_ptr<ofImage> img, const string& layerName) {
             if (layerName == "surface") {
