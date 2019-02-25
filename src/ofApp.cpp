@@ -93,7 +93,12 @@ void ofApp::draw(){
     
     if (eyeGrid.bDebugMode || bDrawGui) {
         for (auto &vec: poseVecs) {
+            ofPushStyle();
+            ofNoFill();
+            ofSetLineWidth(2.0);
+            ofSetColor(ofColor::greenYellow);
             ofDrawCircle(vec, 20);
+            ofPopStyle();
         }
     }
     
@@ -180,7 +185,7 @@ void ofApp::onBroadcast( ofxLibwebsockets::Event& args ){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == 's') {
+    if (key == 's' || key == ofKey::OF_KEY_BACKSPACE) {
         bDrawGui = !bDrawGui;
     }
     if (key == 'f') {

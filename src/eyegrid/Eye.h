@@ -20,8 +20,10 @@ namespace eyegrid {
         shared_ptr<ofImage> shadeImg;
         
         float lastLookAt = 0;
+        float attentionDelay;
         
-        ofFbo fbo;
+        unsigned long actualTime, sucessTimer;
+        unsigned int sucessTimeDelta;
         
     public:
         
@@ -29,8 +31,13 @@ namespace eyegrid {
         void update();
         void draw(const bool &debugMode);
         void lookAt(const ofVec2f& vec);
+        void rest();
         
         ofRectangle eyeRect;
+        
+        inline bool isAnimating() {
+            return lookAtAnim.isAnimating();
+        }
         
         inline void setImageLayer(shared_ptr<ofImage> img, const string& layerName) {
             if (layerName == "surface") {

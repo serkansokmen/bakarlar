@@ -7,11 +7,6 @@
 #include "ofxLibwebsockets.h"
 #include "Grid.h"
 
-// listening port
-#define CLIENT_HOST "localhost"
-#define CLIENT_PORT 8080
-#define OSC_PORT    3000
-
 class ofApp : public ofBaseApp {
     
 public:

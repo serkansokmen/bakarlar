@@ -11,10 +11,7 @@ namespace eyegrid {
     class Grid {
     
     private:
-        void initEyes();
-//        void lookAt(const ofPoint &lookAt);
-        void rest();
-//        vector<shared_ptr<ofxAnimatableOfPoint>> lookAtPositions;
+        void setupEyes();
         
         ofFbo           eyesFbo;
         ofRectangle     rect;

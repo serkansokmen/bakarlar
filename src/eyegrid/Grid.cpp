@@ -46,20 +46,20 @@ void Grid::setup(const ofRectangle& rect, int c, int r){
     float eyeHeight = rect.getHeight() / this->rows;
     this->eyeRadius = MIN(eyeWidth, eyeHeight);
     
-    eyesFbo.allocate(this->rect.getWidth(), this->rect.getHeight());
-    eyesFbo.begin();
-    ofClear(0,0,0,0);
-    ofSetColor(ofColor::white);
-    eyesFbo.end();
-    
-    this->initEyes();
+    setupEyes();
     
     cols.addListener(this, &Grid::setCols);
     rows.addListener(this, &Grid::setRows);
 }
 
 //--------------------------------------------------------------
-void Grid::initEyes(){
+void Grid::setupEyes(){
+    
+    eyesFbo.allocate(rect.getWidth(), rect.getHeight());
+    eyesFbo.begin();
+    ofClear(0,0,0,0);
+    ofSetColor(ofColor::white);
+    eyesFbo.end();
     
     eyes.clear();
     
@@ -90,7 +90,7 @@ void Grid::update(const vector<ofVec2f>& poseVecs) {
     for (int eyeIndex = 0; eyeIndex < cols * rows; ++eyeIndex) {
         auto eye = eyes[eyeIndex];
         
-        if (numPoses > 0) {
+        if (numPoses > 0 && !eye->isAnimating()) {
             int poseIndex = (int)ofRandom(0, numPoses - 1);
             ofVec2f targetPos = poseVecs[poseIndex];
             float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0,
@@ -99,6 +99,8 @@ void Grid::update(const vector<ofVec2f>& poseVecs) {
             ofVec2f normalizedPos = eyeCenter.getInterpolated(targetPos, perc);
             eye->lookAt(normalizedPos);
 //            ofLog(OF_LOG_NOTICE, "Pose Index: " + ofToString(poseIndex));
+        } else {
+            eye->rest();
         }
         
         eye->update();
@@ -147,10 +149,4 @@ void Grid::draw(){
 //    }
 //}
 
-//--------------------------------------------------------------
-void Grid::rest() {
-//    for (auto & eye : eyes) {
-//        eye->pupilPos.animateTo(eye->restPos);
-//    }
-}
 

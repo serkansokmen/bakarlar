@@ -25,20 +25,16 @@ AnimCurve getRandomAnimCurve() {
 //--------------------------------------------------------------
 void Eye::setup(const ofVec2f &p, float w, float h)
 {
-    fbo.allocate(w, h);
-    fbo.begin();
-    ofClear(0, 0, 0, 0);
-    fbo.end();
-    
     eyeRect.set(p, w, h);
     
     lookAtAnim.setPosition(eyeRect.getCenter());
     lookAtAnim.setRepeatType(PLAY_ONCE);
     lookAtAnim.setRepeatTimes(0);
     
-//    pupilPos.setPosition(restPos);
-//    pupilPos.setRepeatType(PLAY_ONCE);
-//    pupilPos.setRepeatTimes(0);
+    sucessTimeDelta = 2000;
+    
+    lastLookAt = 0;
+    attentionDelay = (int)ofRandom(18, 200);
 }
 
 //--------------------------------------------------------------
@@ -58,7 +54,6 @@ void Eye::draw(const bool& debugMode){
         
         ofPushStyle();
         ofPushMatrix();
-//        ofTranslate(eyeRect.getWidth() * 0.5, eyeRect.getHeight() * 0.5);
         ofSetColor(80);
         ofSetLineWidth(2);
         ofNoFill();
@@ -98,15 +93,12 @@ void Eye::draw(const bool& debugMode){
             shadeImg->draw(eyeRect);
         }
         ofPopMatrix();
-
 	}
 }
 
 void Eye::lookAt(const ofVec2f& vec) {
     
-//    ofLog(OF_LOG_NOTICE, ofToString(lastLookAt));
-//
-    if (lastLookAt < 100) {
+    if (lastLookAt <= attentionDelay) {
         lastLookAt++;
         return;
     }
@@ -117,4 +109,8 @@ void Eye::lookAt(const ofVec2f& vec) {
         lastLookAt = 0;
         lookAtAnim.animateTo(vec);
     }
+}
+
+void Eye::rest() {
+    
 }
