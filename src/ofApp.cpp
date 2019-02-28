@@ -18,7 +18,26 @@ void ofApp::setup(){
     ofSetWindowTitle("Bakarlar");
     ofEnableSmoothing();
     ofEnableAntiAliasing();
+    ofSetEscapeQuitsApp(false);
+    ofSetWindowShape(ofGetWidth() * 2, ofGetHeight() * 2);
+    ofSetWindowPosition((ofGetScreenWidth() - ofGetWindowWidth())/2, (ofGetScreenHeight() - ofGetWindowHeight())/2);
     
+    setupWebSocket();
+    client.addListener(this);
+    
+    // setup osc
+    receiver.setup(OSC_PORT);
+    
+    setupGui();
+    
+    gridRect.set(0, 0, ofGetWidth(), ofGetHeight());
+    eyeGrid.setup(gridRect, eyeGrid.cols, eyeGrid.rows);
+    
+    loadSettings();
+}
+
+//--------------------------------------------------------------
+void ofApp::setupWebSocket() {
     // 1 - get default options
     ofxLibwebsockets::ClientOptions options = ofxLibwebsockets::defaultClientOptions();
     
@@ -39,27 +58,40 @@ void ofApp::setup(){
     
     // 4 - connect
     client.connect(options);
-    client.addListener(this);
+}
+
+//--------------------------------------------------------------
+void ofApp::setupGui() {
     
-    // setup osc
-    receiver.setup(OSC_PORT);
+    gui = new ofxDatGui(ofxDatGuiAnchor::TOP_RIGHT);
     
-    // Setup params
-    gui.setName("Settings");
-    ofParameterGroup params;
+    gui->addHeader("Settings");
+    gui->addButton(GUI_LABEL_CONNECT_TO_WS);
     
-    params.add(eyeGrid.params);
-    gui.setup(params);
+    ofxDatGuiFolder* gridFolder = new ofxDatGuiFolder("Eyes");
+    gridFolder->addSlider(eyeGrid.cols);
+    gridFolder->addSlider(eyeGrid.rows);
     
-    //    datGui = new ofxDatGui(ofxDatGuiAnchor::TOP_LEFT);
-    //    datGui->addSlider(eyeGrid.params);
-    //    datGui->addToggle("Debug", bDrawGui);
+    gui->addFolder(gridFolder);
+    gui->addFRM();
     
-    gui.loadFromFile("settings.xml");
+    gui->addToggle(GUI_LABEL_TOGGLE_DEBUG, eyeGrid.bDebugMode);
+    
+    gui->addFooter();
+    gui->getFooter()->setLabelWhenExpanded("close");
+    gui->getFooter()->setLabelWhenCollapsed("expand");
+    
+    gui->onButtonEvent([&](ofxDatGuiButtonEvent e) {
+//        cout << e.target->getLabel() << endl;
+        if (e.target->getLabel() == GUI_LABEL_CONNECT_TO_WS && !client.isConnected()) {
+                setupWebSocket();
+        }
+        if (e.target->getLabel() == GUI_LABEL_TOGGLE_DEBUG) {
+            eyeGrid.bDebugMode = !eyeGrid.bDebugMode;
+        }
+    });
+    
     bDrawGui = true;
-    
-    gridRect.set(0, 0, ofGetWidth(), ofGetHeight());
-    eyeGrid.setup(gridRect, eyeGrid.cols, eyeGrid.rows);
 }
 
 //--------------------------------------------------------------
@@ -69,6 +101,8 @@ void ofApp::update(){
     
     eyeGrid.update(poseVecs);
     
+    gui->setAutoDraw(bDrawGui);
+    
     while(receiver.hasWaitingMessages()){
         // get the next message
         ofxOscMessage m;
@@ -77,13 +111,6 @@ void ofApp::update(){
             bDrawGui = !bDrawGui;
         }
     }
-    
-    //    if (!lookAt->isAnimating()){
-    //        eyeGrid.lookAt(ofVec2f(lookAt->getCurrentPosition().x, lookAt->getCurrentPosition().y));
-    //    } else {
-    //        // TODO: add behaivoral lookAt
-    //        eyeGrid.rest();
-    //    }
 }
 
 //--------------------------------------------------------------
@@ -100,10 +127,6 @@ void ofApp::draw(){
             ofDrawCircle(vec, 20);
             ofPopStyle();
         }
-    }
-    
-    if (bDrawGui) {
-        gui.draw();
     }
 }
 
@@ -130,15 +153,18 @@ void ofApp::onIdle( ofxLibwebsockets::Event& args ){
 //--------------------------------------------------------------
 void ofApp::onMessage( ofxLibwebsockets::Event& args ){
 //    ofLog(OF_LOG_NOTICE, args.message);
-    
     int width = args.json["image"]["width"];
     int height = args.json["image"]["height"];
-    
     int numPoses = args.json["poses"].size();
+    
+//    if ((eyeGrid.cols != numPoses || eyeGrid.rows != numPoses) && numPoses > 0) {
+//        eyeGrid.setup(gridRect, numPoses * 2, numPoses * 2);
+//    }
     
 //    int numExistingPoses = poseVecs.size();
     poseVecs.clear();
     for (int poseIndex = 0; poseIndex < numPoses; ++poseIndex) {
+        
         auto pose = args.json["poses"][poseIndex];
         auto keypoints = pose["keypoints"];
         float score = pose["score"];
@@ -150,8 +176,6 @@ void ofApp::onMessage( ofxLibwebsockets::Event& args ){
             float partScore = keypoint["score"];
             
             if (in_array(partName, ALOWED_TRACK_PARTS) && partScore > 0.5) {
-//            if (partName == "nose" && partScore > 0.5) {
-                
                 if (poseVecs.size() <= poseIndex) {
                     float x = keypoints[poseIndex]["position"]["x"];
                     float y = keypoints[poseIndex]["position"]["y"];
@@ -163,16 +187,8 @@ void ofApp::onMessage( ofxLibwebsockets::Event& args ){
                     poseVecs.push_back(vec);
                     break;
                 }
-                //                        poseVecs[poseIndex].set(vec);
-                //                    break;
-                //                average += vec;
             }
         }
-        //        average = average / numPoses;
-        //        average.x *= ofGetWindowWidth();
-        //        average.y *= ofGetWindowHeight();
-        
-        //        poseVecs[poseIndex].set(average);
     }
 }
 
@@ -187,6 +203,8 @@ void ofApp::onBroadcast( ofxLibwebsockets::Event& args ){
 void ofApp::keyPressed(int key){
     if (key == 's' || key == ofKey::OF_KEY_BACKSPACE) {
         bDrawGui = !bDrawGui;
+        poseVecs.clear();
+        
     }
     if (key == 'f') {
         ofToggleFullscreen();
@@ -203,26 +221,13 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    //    ofRectangle rect(colorTracker.drawPos.get(), GRABBER_WIDTH, GRABBER_HEIGHT);
-    //    if (isTracking() && rect.inside(x, y)) {
-    //        if (bUseGrabber) {
-    //            *trackPixels = grabber.getPixels();
-    //        } else if (bUsePlayer) {
-    //            *trackPixels = player.getPixels();
-    //        } else if (bUseKinect) {
-    //            *trackPixels = kinect.getDepthPixels();
-    //        };
-    //        colorTracker.targetColor = trackPixels->getColor(x - colorTracker.drawPos->x, y - colorTracker.drawPos->y);
-    //    }
+    if (eyeGrid.bDebugMode) {
+        poseVecs.push_back(ofVec2f(x, y));
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    if (bDrawGui) {
-        //        for (auto &pos : poseVecs) {
-        //            pos.set(x, y);
-        //        }
-    }
 }
 
 //--------------------------------------------------------------
@@ -235,13 +240,24 @@ void ofApp::windowResized(int w, int h){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
-    //    bUseGrabber.removeListener(this, &ofApp::toggleGrabber);
-    //    bUsePlayer.removeListener(this, &ofApp::togglePlayer);
-    //    bUseKinect.removeListener(this, &ofApp::toggleKinect);
-    //
-    //    player.close();
-    //    kinect.close();
-    gui.saveToFile("settings.xml");
+    saveSettings();
 }
 
+//--------------------------------------------------------------
+void ofApp::loadSettings() {
+    ofxXmlSettings settings;
+    settings.loadFile(SETTINGS_FILE_NAME);
+    
+    eyeGrid.cols.set(settings.getValue("settings:cols", 4));
+    eyeGrid.rows.set(settings.getValue("settings:rows", 4));
+    eyeGrid.bDebugMode.set(settings.getValue("settings:debug", true));
+}
+
+//--------------------------------------------------------------
+void ofApp::saveSettings() {
+    ofxXmlSettings settings;
+    settings.setValue("settings:cols", eyeGrid.cols);
+    settings.setValue("settings:rows", eyeGrid.rows);
+    settings.setValue("settings:debug", eyeGrid.bDebugMode);
+    settings.saveFile(SETTINGS_FILE_NAME);
+}

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
 #include "ofxOsc.h"
 #include "ofxAnimatableOfPoint.h"
 #include "ofxLibwebsockets.h"
+#include "ofxXmlSettings.h"
+#include "ofxDatGui.h"
 #include "Grid.h"
 
 class ofApp : public ofBaseApp {
@@ -21,7 +22,8 @@ public:
     void keyPressed(int key);
     void windowResized(int w, int h);
     
-    ofxLibwebsockets::Client client;
+    void setupGui();
+    void setupWebSocket();
     
     // websocket methods
     void onConnect( ofxLibwebsockets::Event& args );
@@ -31,18 +33,17 @@ public:
     void onMessage( ofxLibwebsockets::Event& args );
     void onBroadcast( ofxLibwebsockets::Event& args );
     
-    eyegrid::Grid       eyeGrid;
-    vector<ofVec2f>     poseVecs;
+    void loadSettings();
+    void saveSettings();
     
-    ofxOscReceiver      receiver;
+    ofxLibwebsockets::Client    client;
+    eyegrid::Grid               eyeGrid;
+    ofxOscReceiver              receiver;
     
-    ofxPanel                gui;
-//    ofxDatGui               *datGui;
+    ofxDatGui*              gui;
     
-//    ofParameter<bool>       bUseGrabber;
-//    ofParameter<bool>       bUsePlayer;
-//    ofParameter<bool>       bUseKinect;
     ofRectangle             gridRect;
+    vector<ofVec2f>         poseVecs;
     
     bool bDrawGui;
 };

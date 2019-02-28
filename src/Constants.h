@@ -12,5 +12,11 @@
 //#define ALOWED_TRACK_PARTS  vector<string>{"nose", "leftElbow", "rightElbow"}
 #define ALOWED_TRACK_PARTS  vector<string>{"nose"}
 
+// strings
+#define GUI_LABEL_CONNECT_TO_WS "Connect to WS"
+#define GUI_LABEL_TOGGLE_DEBUG "Debug Mode"
+#define SETTINGS_FILE_NAME "settings.xml"
+
+// tracking
 #define GRABBER_WIDTH       640
 #define GRABBER_HEIGHT      480

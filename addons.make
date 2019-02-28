@@ -1,4 +1,6 @@
 ofxAnimatable
+ofxDatGui
 ofxGui
 ofxLibwebsockets
 ofxOsc
+ofxXmlSettings

@@ -22,9 +22,6 @@ namespace eyegrid {
         float lastLookAt = 0;
         float attentionDelay;
         
-        unsigned long actualTime, sucessTimer;
-        unsigned int sucessTimeDelta;
-        
     public:
         
         void setup(const ofVec2f& pos, float w, float h);

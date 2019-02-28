@@ -31,8 +31,6 @@ void Eye::setup(const ofVec2f &p, float w, float h)
     lookAtAnim.setRepeatType(PLAY_ONCE);
     lookAtAnim.setRepeatTimes(0);
     
-    sucessTimeDelta = 2000;
-    
     lastLookAt = 0;
     attentionDelay = (int)ofRandom(18, 200);
 }
@@ -112,5 +110,5 @@ void Eye::lookAt(const ofVec2f& vec) {
 }
 
 void Eye::rest() {
-    
+    lookAtAnim.reset();
 }
