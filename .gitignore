@@ -49,6 +49,7 @@ xcuserdata
 *.opensdf
 *.suo
 ipch/
+.vs/
 
 #Eclipse
 .metadata
@@ -84,7 +85,7 @@ Desktop.ini
 .mailmap
 
 # Ignore data folder
-bin/data/
+bin/
 cloak/
 
 *.xml
