@@ -23,8 +23,7 @@ AnimCurve getRandomAnimCurve() {
 }
 
 //--------------------------------------------------------------
-void Eye::setup(const ofVec2f &p, float w, float h)
-{
+void Eye::setup(const ofVec2f &p, float w, float h) {
     eyeRect.set(p, w, h);
     
     lookAtAnim.setPosition(eyeRect.getCenter());
@@ -33,16 +32,23 @@ void Eye::setup(const ofVec2f &p, float w, float h)
     
     lastLookAt = 0;
     attentionDelay = (int)ofRandom(18, 200);
+    
+    restTimeDelta = EYE_REST_TIMEDELTA;
 }
 
 //--------------------------------------------------------------
-void Eye::update(){
+void Eye::update() {
+    actualTime = ofGetElapsedTimeMillis();
     float dt = 1.0f / 60.0f;
     lookAtAnim.update(dt);
+    
+    if (actualTime - restTimer > restTimeDelta) {
+        lookAtAnim.animateTo(eyeRect.getCenter());
+    }
 }
 
 //--------------------------------------------------------------
-void Eye::draw(const bool& debugMode){
+void Eye::draw(const bool& debugMode) {
 	
     auto lookAt = lookAtAnim.getCurrentPosition();
     
@@ -110,5 +116,5 @@ void Eye::lookAt(const ofVec2f& vec) {
 }
 
 void Eye::rest() {
-    lookAtAnim.reset();
+    restTimer = ofGetElapsedTimeMillis();
 }

@@ -1206,10 +1206,10 @@
 		E8128B571D4F949D9E23F108 /* eyegrid */ = {
 			isa = PBXGroup;
 			children = (
-				4AEB18018DDBA4702115B6A6 /* Eye.cpp */,
 				D14FA290295B7C582EAE612C /* Grid.h */,
-				68175781F10EF430E02276DB /* Eye.h */,
 				ACB69BEF68FB150CFB9FB6E9 /* Grid.cpp */,
+				68175781F10EF430E02276DB /* Eye.h */,
+				4AEB18018DDBA4702115B6A6 /* Eye.cpp */,
 				8B0B91D4D2AF244F48DAABA7 /* EyeImageSet.h */,
 			);
 			name = eyegrid;

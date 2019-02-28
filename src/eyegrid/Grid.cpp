@@ -90,7 +90,7 @@ void Grid::update(const vector<ofVec2f>& poseVecs) {
     for (int eyeIndex = 0; eyeIndex < cols * rows; ++eyeIndex) {
         auto eye = eyes[eyeIndex];
         
-        if (numPoses > 0 && !eye->isAnimating()) {
+        if (numPoses > 0) {
             int poseIndex = (int)ofRandom(0, numPoses - 1);
             ofVec2f targetPos = poseVecs[poseIndex];
             float perc = ofNormalize(eyeRadius * EYE_PUPIL_POS_MULT, 0,
@@ -99,7 +99,9 @@ void Grid::update(const vector<ofVec2f>& poseVecs) {
             ofVec2f normalizedPos = eyeCenter.getInterpolated(targetPos, perc);
             eye->lookAt(normalizedPos);
 //            ofLog(OF_LOG_NOTICE, "Pose Index: " + ofToString(poseIndex));
-        } else {
+        }
+        
+        if (!eye->isAnimating() || numPoses == 0) {
             eye->rest();
         }
         
