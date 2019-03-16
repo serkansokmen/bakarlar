@@ -87,11 +87,10 @@ void Eye::draw(const bool& debugMode) {
             shadeImg->isAllocated()) {
             
             whiteImg->draw(eyeRect);
-            ofSetRectMode(OF_RECTMODE_CENTER);
+            pupilImg->setAnchorPercent(0.5, 0.5);
             pupilImg->draw(lookAt,
                            eyeRect.getWidth() * EYE_PUPIL_SCL_MULT,
                            eyeRect.getHeight() * EYE_PUPIL_SCL_MULT);
-            ofSetRectMode(OF_RECTMODE_CORNER);
             
             surfaceImg->draw(eyeRect);
             shadeImg->draw(eyeRect);
